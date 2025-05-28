@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bnvg174aajt5p"]
 
 [ext_resource type="Script" uid="uid://ii7h0f0uu4pi" path="res://Scripts/GameManager.cs" id="1_0e48y"]
-[ext_resource type="PackedScene" uid="uid://bsdl4cra7mm71" path="res://Prefabs/guarda.tscn" id="2_0e48y"]
+[ext_resource type="PackedScene" uid="uid://64m8q42rl5om" path="res://Prefabs/tile.tscn" id="2_0e48y"]
 
 [node name="Node2D" type="Node2D"]
 
@@ -11,4 +11,4 @@ scale = Vector2(3.54825, 1.05998)
 
 [node name="GameManager" type="Node2D" parent="."]
 script = ExtResource("1_0e48y")
-Mosqueteiro = ExtResource("2_0e48y")
+Cell = ExtResource("2_0e48y")
