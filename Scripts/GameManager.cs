@@ -9,6 +9,10 @@ public partial class GameManager : Node
 {
     [Export] public PackedScene Cellscene;
 
+    [Export] public PackedScene Guarda;
+
+    [Export] public PackedScene Mosca;
+
     public enum EstadoJogo { JOGANDO = 0, GANHOU_G = 1, GANHOU_M = 2 };
 
     public Vector2 CellSize;
@@ -52,8 +56,25 @@ public partial class GameManager : Node
 
                 // Salva referência na matriz
                 grid[y, x] = cellInstance;
+
+                 Node2D guardainst = Guarda.Instantiate<Node2D>();
+                // Define a posição da célula na tela
+                Vector2 pos1 = Offset + new Vector2(x * CellSize.X * CellScale.X, y * CellSize.Y * CellScale.Y);
+                guardainst.Position = pos1;
+                GD.Print(screenSize);
+
+                // Adiciona à árvore como filha desse node
+                AddChild(guardainst);
+
+                // Salva referência na matriz
+                grid[2, 2] = guardainst;
             }
+
         }
+
+       
+        
+        
     }
     
     public void GerarPeca()

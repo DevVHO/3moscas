@@ -3,4 +3,5 @@
 [ext_resource type="Texture2D" uid="uid://bn1k105ygaat" path="res://Resources/Guarda.png" id="1_5qdu4"]
 
 [node name="Guarda" type="Sprite2D"]
+scale = Vector2(0.5, 0.5)
 texture = ExtResource("1_5qdu4")
