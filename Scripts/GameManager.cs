@@ -9,6 +9,8 @@ public partial class GameManager : Node
 {
     [Export] public PackedScene Cellscene;
 
+    public enum EstadoJogo { JOGANDO = 0, GANHOU_G = 1, GANHOU_M = 2 };
+
     public Vector2 CellSize;
     private Vector2 CellScale;
     private Vector2 Offset;
@@ -32,7 +34,7 @@ public partial class GameManager : Node
         float gridWidth = columns * CellSize.X * CellScale.X;
         float gridHeight = rows * CellSize.Y * CellScale.Y;
         Vector2 screenSize = GetViewport().GetVisibleRect().Size;
-        Vector2 Offset = (screenSize - new Vector2(gridWidth, gridHeight)) / 3;
+        Vector2 Offset = (screenSize - new Vector2(gridWidth, gridHeight + 40)) / 2.65f;
 
 
         for (int y = 0; y < rows; y++)
@@ -52,6 +54,11 @@ public partial class GameManager : Node
                 grid[y, x] = cellInstance;
             }
         }
+    }
+    
+    public void GerarPeca()
+    {
+        
     }
 }
     

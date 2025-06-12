@@ -16,3 +16,5 @@ Cellscene = ExtResource("2_0e48y")
 [node name="Gridmanager" type="Node2D" parent="."]
 
 [node name="Target" type="Node2D" parent="Gridmanager"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
