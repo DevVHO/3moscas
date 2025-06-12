@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://cb1mi63uj6cor"]
+[gd_scene load_steps=2 format=3 uid="uid://bixuugjkqtdl8"]
 
-[ext_resource type="Texture2D" uid="uid://dckj2cdlaat56" path="res://Resources/Mosqueteiro.png" id="1_eldur"]
+[ext_resource type="Texture2D" uid="uid://dckj2cdlaat56" path="res://Resources/Mosqueteiro.png" id="1_sn14n"]
 
-[node name="Mosqueteiro" type="Sprite2D"]
-texture = ExtResource("1_eldur")
+[node name="Mosqueteiro" type="Node2D"]
+
+[node name="Mosqueteiro_S" type="Sprite2D" parent="."]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("1_sn14n")

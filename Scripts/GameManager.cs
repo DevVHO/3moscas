@@ -8,9 +8,7 @@ using System.Threading.Tasks.Dataflow;
 public partial class GameManager : Node
 {
     [Export] public PackedScene Cellscene;
-
     [Export] public PackedScene Guarda;
-
     [Export] public PackedScene Mosca;
 
     public enum EstadoJogo { JOGANDO = 0, GANHOU_G = 1, GANHOU_M = 2 };
@@ -73,10 +71,6 @@ public partial class GameManager : Node
             }
 
         }
-
-       
-        
-        
     }
     
     public void GerarPeca()
