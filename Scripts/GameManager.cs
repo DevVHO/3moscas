@@ -9,6 +9,7 @@ public partial class GameManager : Node
 {
     [Export] public PackedScene Cellscene;
     [Export] public PackedScene Guarda;
+
     [Export] public PackedScene Mosca;
 
     public enum EstadoJogo { JOGANDO = 0, GANHOU_G = 1, GANHOU_M = 2 };
@@ -30,7 +31,7 @@ public partial class GameManager : Node
         Node2D cellTemp = Cellscene.Instantiate<Node2D>();
         Sprite2D spritecell = cellTemp.GetNode<Sprite2D>("Sprite2D");
         Vector2 CellSize = spritecell.Texture.GetSize();
-        Vector2 CellScale = spritecell.Scale;
+        Vector2 CellScale = cellTemp.Scale;
         cellTemp.QueueFree();
         //Tamanho da grid
         float gridWidth = columns * CellSize.X * CellScale.X;
