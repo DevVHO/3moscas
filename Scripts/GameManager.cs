@@ -59,7 +59,7 @@ public partial class GameManager : Node
 
 
                 //Cria  Guardas
-                 Node2D guardainst = Guarda.Instantiate<Node2D>();
+                Node2D guardainst = Guarda.Instantiate<Node2D>();
                 // Define a posição da célula na tela
                 Vector2 pos1 = Offset + new Vector2(x * CellSize.X * CellScale.X, y * CellSize.Y * CellScale.Y);
                 guardainst.Position = pos1;
@@ -67,9 +67,7 @@ public partial class GameManager : Node
 
                 // Adiciona à árvore como filha desse node
                 AddChild(guardainst);
-
-                // Salva referência na matriz
-                grid[2, 2] = guardainst;
+                
             }
 
         }
