@@ -57,6 +57,8 @@ public partial class GameManager : Node
                 // Salva referência na matriz
                 grid[y, x] = cellInstance;
 
+
+                //Cria  Guardas
                  Node2D guardainst = Guarda.Instantiate<Node2D>();
                 // Define a posição da célula na tela
                 Vector2 pos1 = Offset + new Vector2(x * CellSize.X * CellScale.X, y * CellSize.Y * CellScale.Y);
