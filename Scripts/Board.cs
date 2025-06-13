@@ -1,58 +1,103 @@
 using Godot;
 using System;
+using System.Runtime;
 
 public partial class Board : Node2D
 {
     public int rows = 5;
     public int columns = 5;
     private Node2D[,] grid;
-    [Export] public PackedScene cellScene;
-    [Export] public PackedScene guardaScene;
+
+    
+    [Export] public PackedScene Cellscene;
+    [Export] public PackedScene Guarda;
+    [Export] public PackedScene Mosca;
     public override void _Ready()
     {
         grid = new Node2D[rows, columns];
+        //Pegar a position de target para que assim eu consiga instanciar através dela
+        var target = GetNode<Node2D>("Target");
+
     }
 
     public void GenerateGrid()
     {
-        GD.Print($"GenerateGrid chamado. grid é {(grid == null ? "null" : "inicializado")}");
-        if (cellScene == null)
-        {
-            GD.PrintErr("cellScene está null!");
-            return;
-        }
-        var temp = cellScene.Instantiate() as Node2D;
-        if (temp == null)
-        {
-            GD.PrintErr("cellScene não é Node2D.");
-            return;
-        }
-
-        var sprite = temp.GetNode<Sprite2D>("Sprite2D");
-        var size = sprite.Texture.GetSize();
-        var scale = temp.Scale;
-        temp.QueueFree();
-
-        float gridWidth = columns * size.X * scale.X;
-        float gridHeight = rows * size.Y * scale.Y;
+        var target = GetNode<Node2D>("Target");
+        Node2D cellTemp = Cellscene.Instantiate<Node2D>();
+        Sprite2D spritecell = cellTemp.GetNode<Sprite2D>("Sprite2D");
+        Vector2 CellSize = spritecell.Texture.GetSize();
+        Vector2 CellScale = cellTemp.Scale;
+        cellTemp.QueueFree();
+        //Tamanho da grid
+        float gridWidth = columns * CellSize.X * CellScale.X;
+        float gridHeight = rows * CellSize.Y * CellScale.Y;
         Vector2 screenSize = GetViewport().GetVisibleRect().Size;
-        Vector2 offset = (screenSize - new Vector2(gridWidth, gridHeight + 40)) / 2.65f;
+        Vector2 Offset = (screenSize - new Vector2(gridWidth, gridHeight + 40)) / 2.65f;
+
 
         for (int y = 0; y < rows; y++)
         {
             for (int x = 0; x < columns; x++)
             {
-                Vector2 pos = offset + new Vector2(x * size.X * scale.X, y * size.Y * scale.Y);
+                Node2D cellInstance = Cellscene.Instantiate<Node2D>();
+                // Define a posição da célula na tela
+                Vector2 pos = Offset + new Vector2(x * CellSize.X * CellScale.X, y * CellSize.Y * CellScale.Y);
+                cellInstance.Position = pos;
+                GD.Print(screenSize);
 
-                var cell = cellScene.Instantiate<Node2D>();
-                cell.Position = pos;
-                AddChild(cell);
-                grid[y, x] = cell;
+                // Adiciona à árvore como filha desse node
+                target.AddChild(cellInstance);
 
-                var guarda = guardaScene.Instantiate<Node2D>();
-                guarda.Position = pos;
-                AddChild(guarda);
+                // Salva referência na matriz
+                grid[y, x] = cellInstance;
+
+                char currentChar = boardMatrixChars[y, x];
+    Ocupacao ocupacao = CharParaOcupacao(currentChar);
+
+    if (ocupacao == Ocupacao.Guarda)
+    {
+        Node2D guardaInst = Guarda.Instantiate<Node2D>();
+        guardaInst.Position = pos;
+        target.AddChild(guardaInst);
+    }
+    else if (ocupacao == Ocupacao.Mosca)
+    {
+        Node2D moscaInst = Mosca.Instantiate<Node2D>();
+        moscaInst.Position = pos;
+        target.AddChild(moscaInst);
+    }
+                
             }
+
         }
     }
+
+    private char[,] boardMatrixChars = new char[5, 5]
+  {
+    { 'G', 'G', 'G', 'G', 'M' },
+    { 'G', 'G', 'G', 'G', 'G' },
+    { 'G', 'G', 'M', 'G', 'G' },
+    { 'G', 'G', 'G', 'G', 'G' },
+    { 'M', 'G', 'G', 'G', 'G' }
+  };
+
+    private Ocupacao CharParaOcupacao(char c)
+    {
+        return c switch
+        {
+            'M' => Ocupacao.Mosca,
+            'G' => Ocupacao.Guarda,
+            'V' => Ocupacao.Vazio,
+            _ => throw new ArgumentException($"Caractere inválido: {c}")
+        };
+    }
+
+
+    public enum Ocupacao
+    {
+        Vazio,
+        Mosca,
+        Guarda
+    }
+    
 }
