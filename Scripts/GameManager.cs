@@ -1,7 +1,24 @@
 using Godot;
+using System;
+using System.Data;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks.Dataflow;
 
-public partial class GameManager : Node2D
+public partial class GameManager : Node
 {
+    [Export] public PackedScene Cellscene;
+    [Export] public PackedScene Guarda;
+    [Export] public PackedScene Mosca;
+
+    public enum EstadoJogo { JOGANDO = 0, GANHOU_G = 1, GANHOU_M = 2 };
+
+    public Vector2 CellSize;
+    private Vector2 CellScale;
+    private Vector2 Offset;
+    public int rows = 5;
+    public int columns = 5;
+    private Node2D[,] grid;
     public override void _Ready()
     {
         //Instancia temporária para adquirir o tamanho do Sprite
