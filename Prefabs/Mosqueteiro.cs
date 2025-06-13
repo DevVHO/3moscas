@@ -56,7 +56,7 @@ public partial class Mosqueteiro : Node2D
     {
         if (node is Guarda guard)
         {
-            // Area do sprite
+            // Areas dos sprites
             var guardSprite = guard.GetNode<Sprite2D>("Guarda_S");
             var guardSize = guardSprite.Texture.GetSize();
             var guardArea = new Rect2(guard.GlobalPosition - guardSize / 2, guardSize);
