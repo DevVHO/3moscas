@@ -57,26 +57,32 @@ public partial class Guarda : Node2D
 
     foreach (Node node in parent.GetChildren())
     {
-        if (node is Tile guard)
+        if (node is Tile tile)
         {
             // Areas dos sprites
-            var guardSprite = guard.GetNode<Sprite2D>("Sprite2D");
-            var guardSize = guardSprite.Texture.GetSize();
-            var guardArea = new Rect2(guard.GlobalPosition - guardSize / 2, guardSize);
+            var tileSprite = tile.GetNode<Sprite2D>("Sprite2D");
+            var tileSize = tileSprite.Texture.GetSize();
+            var tileArea = new Rect2(tile.GlobalPosition - tileSize / 2, tileSize);
 
             var thisSprite = GetNode<Sprite2D>("Guarda_S");
             var thisSize = thisSprite.Texture.GetSize();
             var thisArea = new Rect2(GlobalPosition - thisSize / 2, thisSize);
 
             // Se estiver em cima
-            if (guardArea.Intersects(thisArea))
-            {
-                GlobalPosition = guard.GlobalPosition;
-                guard.QueueFree(); // Deletar
-                gameManager.PassarTurno();
-                matado = true;
-                break;
-            }
+             if (tileArea.Intersects(thisArea))
+{
+    Vector2 distância = tile.GlobalPosition - posicaoinicial;
+
+    // Permite apenas movimentos verticais (acima ou abaixo)
+    if (Mathf.IsEqualApprox(distância.X, 0) && Mathf.Abs(distância.Y) > 0)
+    {
+        GlobalPosition = tile.GlobalPosition;
+        tile.QueueFree(); // Deletar
+        gameManager.PassarTurno();
+        matado = true;
+        break;
+    }
+}
         }
     }
 

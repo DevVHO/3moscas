@@ -59,24 +59,35 @@ public partial class Mosqueteiro : Node2D
     {
         if (node is Guarda guard)
         {
+            
+
             // Areas dos sprites
-            var guardSprite = guard.GetNode<Sprite2D>("Guarda_S");
+                        var guardSprite = guard.GetNode<Sprite2D>("Guarda_S");
             var guardSize = guardSprite.Texture.GetSize();
             var guardArea = new Rect2(guard.GlobalPosition - guardSize / 2, guardSize);
 
             var thisSprite = GetNode<Sprite2D>("Mosqueteiro_S");
             var thisSize = thisSprite.Texture.GetSize();
             var thisArea = new Rect2(GlobalPosition - thisSize / 2, thisSize);
+            
+            
 
             // Se estiver em cima
-            if (guardArea.Intersects(thisArea))
-            {
-                GlobalPosition = guard.GlobalPosition;
-                guard.QueueFree(); // Deletar
-                gameManager.PassarTurno();
-                matado = true;
-                break;
-            }
+                        if (guardArea.Intersects(thisArea))
+{
+    Vector2 distância = guard.GlobalPosition - posicaoinicial;
+
+    // Permite apenas movimentos verticais (acima ou abaixo)
+    if (Mathf.IsEqualApprox(distância.X, 0) && Mathf.Abs(distância.Y) > 0)
+    {
+        GlobalPosition = guard.GlobalPosition;
+        guard.QueueFree(); // Deletar
+        gameManager.PassarTurno();
+        matado = true;
+        break;
+    }
+}
+
         }
     }
 
