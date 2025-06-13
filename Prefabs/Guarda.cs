@@ -7,10 +7,13 @@ public partial class Guarda : Node2D
     private Vector2 mouseOffset;
     private GameManager gameManager;
 
+    private Board board;
+
     public override void _Ready()
     {
         posicaoinicial = GlobalPosition;
         gameManager = GetTree().Root.GetNode<GameManager>("Node2D/GameManager");
+        board = GetTree().Root.GetNode<Board>("Node2D/Gridmanager");
     }
 
     public override void _Process(double delta)

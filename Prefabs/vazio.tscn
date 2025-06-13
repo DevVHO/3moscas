@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://cvay80i7rq2nk"]
+
+[ext_resource type="Script" uid="uid://xmttui7tavtc" path="res://Prefabs/Vazio.cs" id="1_o1mof"]
+[ext_resource type="Texture2D" uid="uid://cqwxffgig3utc" path="res://Resources/Tile.png" id="2_mebvj"]
+
+[node name="Vazio" type="Node2D"]
+script = ExtResource("1_o1mof")
+
+[node name="Vazio_S" type="Sprite2D" parent="."]
+texture = ExtResource("2_mebvj")

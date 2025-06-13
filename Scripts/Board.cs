@@ -12,6 +12,7 @@ public partial class Board : Node2D
     [Export] public PackedScene Cellscene;
     [Export] public PackedScene Guarda;
     [Export] public PackedScene Mosca;
+    [Export] public PackedScene Vazio;
     public override void _Ready()
     {
         grid = new Node2D[rows, columns];

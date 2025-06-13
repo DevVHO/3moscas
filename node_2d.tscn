@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://bnvg174aajt5p"]
+[gd_scene load_steps=7 format=3 uid="uid://bnvg174aajt5p"]
 
 [ext_resource type="Script" uid="uid://ii7h0f0uu4pi" path="res://Scripts/GameManager.cs" id="1_0e48y"]
 [ext_resource type="Script" uid="uid://bx2c1dwio6tvu" path="res://Scripts/Board.cs" id="1_q6r6c"]
 [ext_resource type="PackedScene" uid="uid://d2raeeiu2eckn" path="res://Prefabs/tile.tscn" id="2_0hol4"]
 [ext_resource type="PackedScene" uid="uid://b45nxnfw8ovj0" path="res://Prefabs/guarda.tscn" id="3_0hol4"]
 [ext_resource type="PackedScene" uid="uid://cev2usv318ht0" path="res://Prefabs/mosqueteiro.tscn" id="4_q6r6c"]
+[ext_resource type="PackedScene" uid="uid://cvay80i7rq2nk" path="res://Prefabs/vazio.tscn" id="5_kdubu"]
 
 [node name="Node2D" type="Node2D"]
 
@@ -16,6 +17,7 @@ script = ExtResource("1_q6r6c")
 Cellscene = ExtResource("2_0hol4")
 Guarda = ExtResource("3_0hol4")
 Mosca = ExtResource("4_q6r6c")
+Vazio = ExtResource("5_kdubu")
 
 [node name="Target" type="Node2D" parent="Gridmanager"]
 position = Vector2(-280, -142)
