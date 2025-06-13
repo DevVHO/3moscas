@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class Guarda : Node2D
+public partial class Mosqueteiro : Node2D
 {
     private bool carregando = false;
     private Vector2 posicaoinicial;
@@ -27,7 +27,7 @@ public partial class Guarda : Node2D
             if (mouseEvent.Pressed && mouseEvent.ButtonIndex == MouseButton.Left)
             {
                 Vector2 mousePos = GetGlobalMousePosition();
-                var sprite = GetNode<Sprite2D>("Guarda_S");
+                var sprite = GetNode<Sprite2D>("Mosqueteiro_S");
 
                 var spriteSize = sprite.Texture.GetSize();
                 var spriteRect = new Rect2(GlobalPosition - spriteSize / 2, spriteSize);

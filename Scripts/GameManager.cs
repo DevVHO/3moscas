@@ -56,21 +56,20 @@ public partial class GameManager : Node
                 grid[y, x] = cellInstance;
 
                 char currentChar = boardMatrixChars[y, x];
-Ocupacao ocupacao = CharParaOcupacao(currentChar);
+                Ocupacao ocupacao = CharParaOcupacao(currentChar);
 
-if (ocupacao == Ocupacao.Guarda)
-{
-    Node2D guardaInst = Guarda.Instantiate<Node2D>();
-    guardaInst.Position = pos;
-    AddChild(guardaInst);
-}
-else if (ocupacao == Ocupacao.Mosca)
-{
-    Node2D moscaInst = Mosca.Instantiate<Node2D>();
-    moscaInst.Position = pos;
-    AddChild(moscaInst);
-}
-                
+                if (ocupacao == Ocupacao.Guarda)
+                {
+                    Node2D guardaInst = Guarda.Instantiate<Node2D>();
+                    guardaInst.Position = pos;
+                    AddChild(guardaInst);
+                }
+                else if (ocupacao == Ocupacao.Mosca)
+                {
+                    Node2D moscaInst = Mosca.Instantiate<Node2D>();
+                    moscaInst.Position = pos;
+                    AddChild(moscaInst);
+                }
             }
 
         }
@@ -85,24 +84,21 @@ else if (ocupacao == Ocupacao.Mosca)
     { 'M', 'G', 'G', 'G', 'G' }
   };
 
-private Ocupacao CharParaOcupacao(char c)
-{
-    return c switch
+    private Ocupacao CharParaOcupacao(char c)
     {
-        'M' => Ocupacao.Mosca,
-        'G' => Ocupacao.Guarda,
-        'V' => Ocupacao.Vazio,
-        _ => throw new ArgumentException($"Caractere inválido: {c}")
-    };
-}
-
-
+        return c switch
+        {
+            'M' => Ocupacao.Mosca,
+            'G' => Ocupacao.Guarda,
+            'V' => Ocupacao.Vazio,
+            _ => throw new ArgumentException($"Caractere inválido: {c}")
+        };
+    }
     public enum Ocupacao
     {
         Vazio,
         Mosca,
         Guarda
-
-
     }
+    
 }
