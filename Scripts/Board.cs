@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Runtime;
 
 public partial class Board : Node2D
 {
@@ -13,12 +14,13 @@ public partial class Board : Node2D
     {
         grid = new Node2D[rows, columns];
         //Pegar a position de target para que assim eu consiga instanciar através dela
+
     }
 
     public void GenerateGrid()
     {
         var temp = cellScene.Instantiate() as Node2D;
-
+        var target = GetNode<Node2D>("Target");
         var sprite = temp.GetNode<Sprite2D>("Sprite2D");
         var size = sprite.Texture.GetSize();
         var scale = temp.Scale;
@@ -33,10 +35,11 @@ public partial class Board : Node2D
         {
             for (int x = 0; x < columns; x++)
             {
+
                 Vector2 pos =  offset + new Vector2(x * size.X * scale.X, y * size.Y * scale.Y);
                 var cell = cellScene.Instantiate<Node2D>();
                 cell.Position = pos;
-                AddChild(cell);
+                target.AddChild(cell);
                 grid[y, x] = cell;
             }
         }

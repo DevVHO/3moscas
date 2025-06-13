@@ -1,9 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://bnvg174aajt5p"]
+[gd_scene load_steps=4 format=3 uid="uid://bnvg174aajt5p"]
 
 [ext_resource type="Script" uid="uid://ii7h0f0uu4pi" path="res://Scripts/GameManager.cs" id="1_0e48y"]
 [ext_resource type="Script" uid="uid://bx2c1dwio6tvu" path="res://Scripts/Board.cs" id="1_q6r6c"]
 [ext_resource type="PackedScene" uid="uid://d2raeeiu2eckn" path="res://Prefabs/tile.tscn" id="2_0hol4"]
-[ext_resource type="PackedScene" uid="uid://cu6dw43lsskvv" path="res://Prefabs/guarda.tscn" id="3_0hol4"]
 
 [node name="Node2D" type="Node2D"]
 
@@ -13,7 +12,6 @@ scale = Vector2(3.54825, 1.05998)
 [node name="Gridmanager" type="Node2D" parent="."]
 script = ExtResource("1_q6r6c")
 cellScene = ExtResource("2_0hol4")
-guardaScene = ExtResource("3_0hol4")
 
 [node name="Target" type="Node2D" parent="Gridmanager"]
 
