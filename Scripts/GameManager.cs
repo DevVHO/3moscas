@@ -55,23 +55,55 @@ public partial class GameManager : Node
                 // Salva referência na matriz
                 grid[y, x] = cellInstance;
 
-                // Cria  Guardas
-                Node2D guardainst = Guarda.Instantiate<Node2D>();
-                // Define a posição da célula na tela
-                Vector2 pos1 = Offset + new Vector2(x * CellSize.X * CellScale.X, y * CellSize.Y * CellScale.Y);
-                guardainst.Position = pos1;
+                char currentChar = boardMatrixChars[y, x];
+Ocupacao ocupacao = CharParaOcupacao(currentChar);
 
-                // Adiciona à árvore como filha desse node
-                AddChild(guardainst);
+if (ocupacao == Ocupacao.Guarda)
+{
+    Node2D guardaInst = Guarda.Instantiate<Node2D>();
+    guardaInst.Position = pos;
+    AddChild(guardaInst);
+}
+else if (ocupacao == Ocupacao.Mosca)
+{
+    Node2D moscaInst = Mosca.Instantiate<Node2D>();
+    moscaInst.Position = pos;
+    AddChild(moscaInst);
+}
                 
             }
 
         }
     }
-    
-    public void GerarPeca()
+
+    private char[,] boardMatrixChars = new char[5, 5]
+  {
+    { 'G', 'G', 'G', 'G', 'M' },
+    { 'G', 'G', 'G', 'G', 'G' },
+    { 'G', 'G', 'M', 'G', 'G' },
+    { 'G', 'G', 'G', 'G', 'G' },
+    { 'M', 'G', 'G', 'G', 'G' }
+  };
+
+private Ocupacao CharParaOcupacao(char c)
+{
+    return c switch
     {
-        
+        'M' => Ocupacao.Mosca,
+        'G' => Ocupacao.Guarda,
+        'V' => Ocupacao.Vazio,
+        _ => throw new ArgumentException($"Caractere inválido: {c}")
+    };
+}
+
+
+    public enum Ocupacao
+    {
+        Vazio,
+        Mosca,
+        Guarda
+
+
     }
 }
     
