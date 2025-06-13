@@ -11,7 +11,6 @@ public partial class Board : Node2D
     public override void _Ready()
     {
         grid = new Node2D[rows, columns];
-        GD.Print("Board _Ready rodou, grid inicializado");
     }
 
     public void GenerateGrid()

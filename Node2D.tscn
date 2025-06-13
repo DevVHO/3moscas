@@ -1,0 +1,20 @@
+[gd_scene load_steps=5 format=3 uid="uid://cljnqwtmqijs0"]
+
+[ext_resource type="Script" uid="uid://bx2c1dwio6tvu" path="res://Scripts/Board.cs" id="1_xtkhq"]
+[ext_resource type="PackedScene" uid="uid://d2raeeiu2eckn" path="res://Prefabs/tile.tscn" id="2_lswt1"]
+[ext_resource type="PackedScene" uid="uid://5q8vuh77iwu6" path="res://Prefabs/Guarda.tscn" id="3_8hjgi"]
+[ext_resource type="Script" uid="uid://ii7h0f0uu4pi" path="res://Scripts/GameManager.cs" id="4_fhdy4"]
+
+[node name="Node2d" type="Node2D"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="Gridmanager" type="Node2D" parent="."]
+script = ExtResource("1_xtkhq")
+cellScene = ExtResource("2_lswt1")
+guardaScene = ExtResource("3_8hjgi")
+
+[node name="Target" type="Node2D" parent="Gridmanager"]
+
+[node name="Gamemanager" type="Node2D" parent="."]
+script = ExtResource("4_fhdy4")
