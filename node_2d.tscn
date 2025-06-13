@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://bx2c1dwio6tvu" path="res://Scripts/Board.cs" id="1_q6r6c"]
 [ext_resource type="PackedScene" uid="uid://d2raeeiu2eckn" path="res://Prefabs/tile.tscn" id="2_0hol4"]
 [ext_resource type="PackedScene" uid="uid://b45nxnfw8ovj0" path="res://Prefabs/guarda.tscn" id="3_0hol4"]
-[ext_resource type="PackedScene" uid="uid://cev2usv318ht0" path="res://Prefabs/mosqueteiro.tscn" id="4_q6r6c"]
+[ext_resource type="PackedScene" uid="uid://d1lxt8lr4a4o1" path="res://Prefabs/Mosqueteiro.tscn" id="4_q6r6c"]
 
 [node name="Node2D" type="Node2D"]
 
@@ -18,7 +18,7 @@ Guarda = ExtResource("3_0hol4")
 Mosca = ExtResource("4_q6r6c")
 
 [node name="Target" type="Node2D" parent="Gridmanager"]
-position = Vector2(-280, -142)
+position = Vector2(-274, -134)
 
 [node name="GameManager" type="Node2D" parent="."]
 position = Vector2(-374, -200)
