@@ -32,7 +32,7 @@ public partial class Board : Node2D
         float gridWidth = columns * CellSize.X * CellScale.X;
         float gridHeight = rows * CellSize.Y * CellScale.Y;
         Vector2 screenSize = GetViewport().GetVisibleRect().Size;
-        Vector2 Offset = (screenSize - new Vector2(gridWidth, gridHeight + 40)) / 2.65f;
+        Vector2 Offset = (screenSize - new Vector2(gridWidth, gridHeight + 40)) / 2;
 
 
         for (int y = 0; y < rows; y++)

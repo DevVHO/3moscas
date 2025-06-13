@@ -23,6 +23,3 @@ position = Vector2(-280, -142)
 [node name="GameManager" type="Node2D" parent="."]
 position = Vector2(-374, -200)
 script = ExtResource("1_0e48y")
-Cellscene = ExtResource("2_0hol4")
-Guarda = ExtResource("3_0hol4")
-Mosca = ExtResource("4_q6r6c")
