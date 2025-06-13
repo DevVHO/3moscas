@@ -2,8 +2,13 @@
 
 [ext_resource type="Script" uid="uid://ii7h0f0uu4pi" path="res://Scripts/GameManager.cs" id="1_0e48y"]
 [ext_resource type="PackedScene" uid="uid://d2raeeiu2eckn" path="res://Prefabs/tile.tscn" id="2_0hol4"]
+<<<<<<< HEAD
 [ext_resource type="PackedScene" uid="uid://b45nxnfw8ovj0" path="res://Prefabs/Guarda.tscn" id="3_0hol4"]
 [ext_resource type="Script" uid="uid://bx2c1dwio6tvu" path="res://Scripts/Board.cs" id="5_q6r6c"]
+=======
+[ext_resource type="PackedScene" uid="uid://b45nxnfw8ovj0" path="res://Prefabs/guarda.tscn" id="3_0hol4"]
+[ext_resource type="PackedScene" uid="uid://bixuugjkqtdl8" path="res://Prefabs/mosqueteiro.tscn" id="4_q6r6c"]
+>>>>>>> bdcb8725d759995e90d2c08ef74b40d4859e4208
 
 [node name="Node2D" type="Node2D"]
 
