@@ -1,8 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://c64a56jugpa2l"]
+[gd_scene load_steps=2 format=3 uid="uid://casda6n16ubrk"]
 
 [ext_resource type="Texture2D" uid="uid://dckj2cdlaat56" path="res://Resources/Mosqueteiro.png" id="1_sn14n"]
 
 [node name="Node2D" type="Node2D"]
+scale = Vector2(0.5, 0.5)
 
 [node name="Mosqueteiro" type="Sprite2D" parent="."]
 texture = ExtResource("1_sn14n")
