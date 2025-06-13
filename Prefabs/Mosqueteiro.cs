@@ -45,11 +45,44 @@ public partial class Mosqueteiro : Node2D
                 }
             }
             else if (!mouseEvent.Pressed && carregando)
+{
+    carregando = false;
+    ZIndex = 1;
+
+    var parent = GetParent();
+    bool matado = false;
+
+    foreach (Node node in parent.GetChildren())
+    {
+        if (node is Guarda guard)
+        {
+            // Area do sprite
+            var guardSprite = guard.GetNode<Sprite2D>("Guarda_S");
+            var guardSize = guardSprite.Texture.GetSize();
+            var guardArea = new Rect2(guard.GlobalPosition - guardSize / 2, guardSize);
+
+            var thisSprite = GetNode<Sprite2D>("Mosqueteiro_S");
+            var thisSize = thisSprite.Texture.GetSize();
+            var thisArea = new Rect2(GlobalPosition - thisSize / 2, thisSize);
+
+            // Se estiver em cima
+            if (guardArea.Intersects(thisArea))
             {
-                carregando = false;
-                GlobalPosition = posicaoinicial;
-                ZIndex = 1;
+                GlobalPosition = guard.GlobalPosition;
+                guard.QueueFree(); // Deletar
+                gameManager.PassarTurno();
+                matado = true;
+                break;
             }
+        }
+    }
+
+    if (!matado)
+    {
+        // Return to where it started
+        GlobalPosition = posicaoinicial;
+    }
+}
         }
     }
 }
