@@ -1,16 +1,16 @@
 using Godot;
 
-public partial class Mosqueteiro : Node2D
+public partial class Mosqueteiro : Peca
 {
     private bool carregando = false;
     private Vector2 posicaoinicial;
     private Vector2 mouseOffset;
-    private GameManager gameManager;
 
     public override void _Ready()
     {
+        base._Ready();
         posicaoinicial = GlobalPosition;
-        gameManager = GetTree().Root.GetNode<GameManager>("Node2D/GameManager");
+        Tipo = Board.Ocupacao.Mosca;
     }
 
     public override void _Process(double delta)
@@ -45,44 +45,27 @@ public partial class Mosqueteiro : Node2D
                 }
             }
             else if (!mouseEvent.Pressed && carregando)
-{
-    carregando = false;
-    ZIndex = 1;
-
-    var parent = GetParent();
-    bool matado = false;
-
-    foreach (Node node in parent.GetChildren())
-    {
-        if (node is Guarda guard)
-        {
-            // Areas dos sprites
-            var guardSprite = guard.GetNode<Sprite2D>("Guarda_S");
-            var guardSize = guardSprite.Texture.GetSize();
-            var guardArea = new Rect2(guard.GlobalPosition - guardSize / 2, guardSize);
-
-            var thisSprite = GetNode<Sprite2D>("Mosqueteiro_S");
-            var thisSize = thisSprite.Texture.GetSize();
-            var thisArea = new Rect2(GlobalPosition - thisSize / 2, thisSize);
-
-            // Se estiver em cima
-            if (guardArea.Intersects(thisArea))
             {
-                GlobalPosition = guard.GlobalPosition;
-                guard.QueueFree(); // Deletar
-                gameManager.PassarTurno();
-                matado = true;
-                break;
-            }
-        }
-    }
+                carregando = false;
+                ZIndex = 1;
 
-    if (!matado)
-    {
-        // Return to where it started
-        GlobalPosition = posicaoinicial;
-    }
-}
+                Vector2 destinoVisual = GlobalPosition;
+                Vector2I destinoLogico = board.PosicaoParaIndice(destinoVisual);
+
+                if (board.PodeMover(IndiceAtual, destinoLogico))
+                {
+                    board.MoverPeca(IndiceAtual, destinoLogico);
+                    IndiceAtual = destinoLogico;
+                    GlobalPosition = board.IndiceParaPosicao(destinoLogico);
+                    gameManager.PassarTurno();
+                }
+                else
+                {
+                    GlobalPosition = posicaoinicial;
+                }
+                    
+            }
+
         }
     }
 }

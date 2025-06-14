@@ -1,16 +1,15 @@
 using Godot;
 
-public partial class Guarda : Node2D
+public partial class Guarda : Peca
 {
     private bool carregando = false;
     private Vector2 posicaoinicial;
     private Vector2 mouseOffset;
-    private GameManager gameManager;
 
     public override void _Ready()
     {
         posicaoinicial = GlobalPosition;
-        gameManager = GetTree().Root.GetNode<GameManager>("Node2D/GameManager");
+        Tipo = Board.Ocupacao.Guarda;
     }
 
     public override void _Process(double delta)
@@ -30,13 +29,10 @@ public partial class Guarda : Node2D
                 // Só deixa clicar se for a vez do Guarda
                 if (gameManager.TurnoAtual != GameManager.QuemJoga.Guarda)
                     return;
-
                 Vector2 mousePos = GetGlobalMousePosition();
                 var sprite = GetNode<Sprite2D>("Guarda_S");
-
                 var spriteSize = sprite.Texture.GetSize();
                 var spriteRect = new Rect2(GlobalPosition - spriteSize / 2, spriteSize);
-
                 if (spriteRect.HasPoint(mousePos))
                 {
                     carregando = true;
@@ -45,44 +41,33 @@ public partial class Guarda : Node2D
                 }
             }
             else if (!mouseEvent.Pressed && carregando)
-{
-    carregando = false;
-    ZIndex = 1;
-
-    var parent = GetParent();
-    bool matado = false;
-
-    foreach (Node node in parent.GetChildren())
-    {
-        if (node is Tile guard)
-        {
-            // Areas dos sprites
-            var guardSprite = guard.GetNode<Sprite2D>("Sprite2D");
-            var guardSize = guardSprite.Texture.GetSize();
-            var guardArea = new Rect2(guard.GlobalPosition - guardSize / 2, guardSize);
-
-            var thisSprite = GetNode<Sprite2D>("Guarda_S");
-            var thisSize = thisSprite.Texture.GetSize();
-            var thisArea = new Rect2(GlobalPosition - thisSize / 2, thisSize);
-
-            // Se estiver em cima
-            if (guardArea.Intersects(thisArea))
             {
-                GlobalPosition = guard.GlobalPosition;
-                guard.QueueFree(); // Deletar
-                gameManager.PassarTurno();
-                matado = true;
-                break;
+                carregando = false;
+                ZIndex = 1; 
+
+                
+                Vector2 finalPos = GlobalPosition;
+                Vector2I destinoLogico = board.PosicaoParaIndice(finalPos);
+                Vector2I origemLogica = board.PosicaoParaIndice(posicaoinicial);
+
+                // Tenta mover no board
+                bool movimentoValido = board.TentarMoverPeca(this, origemLogica, destinoLogico);
+
+                if (movimentoValido)
+                {
+                    IndiceAtual = destinoLogico;
+                    GlobalPosition = board.IndiceParaPosicao(destinoLogico);
+                    gameManager.PassarTurno();
+                }
+                else
+                {
+                    // Volta pra posição inicial
+                    GlobalPosition = posicaoinicial;
+                }
             }
+                
         }
     }
 
-    if (!matado)
-    {
-        // Return to where it started
-        GlobalPosition = posicaoinicial;
-    }
-}
-        }
-    }
+    
 }

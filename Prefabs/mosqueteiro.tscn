@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://d1lxt8lr4a4o1"]
+[gd_scene load_steps=3 format=3 uid="uid://brfhbk162xyfg"]
 
 [ext_resource type="Script" uid="uid://cxlkt1i66aqt" path="res://Prefabs/Mosqueteiro.cs" id="1_qfybd"]
 [ext_resource type="Texture2D" uid="uid://dckj2cdlaat56" path="res://Resources/Mosqueteiro.png" id="1_sn14n"]
