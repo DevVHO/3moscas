@@ -145,43 +145,9 @@ public partial class Board : Node2D
         if (!DentroDoTabuleiro(indice)) return null;
         return pecasVisuais[indice.Y, indice.X];
     }
-    public bool TentarMoverPeca(Peca peca, Vector2I origem, Vector2I destino)
-    {
-        // Verifica se destino está dentro do tabuleiro
-        if (!DentroDoTabuleiro(destino))
-            return false;
-
-        // Verifica se a movimentação é válida com base na peça
-        Ocupacao alvo = estadoLogico[destino.Y, destino.X];
-
-        switch (peca.Tipo)
-        {
-            case Ocupacao.Mosca:
-                // Mosqueteiros só podem mover para uma célula com Guarda
-                if (alvo != Ocupacao.Guarda)
-                    return false;
-                break;
-
-            case Ocupacao.Guarda:
-                // Guardas só podem mover para célula vazia
-                if (alvo != Ocupacao.Vazio)
-                    return false;
-                break;
-
-            default:
-                return false;
-        }
-
-        // Movimento válido: atualiza estado lógico
-        estadoLogico[origem.Y, origem.X] = Ocupacao.Vazio;
-        estadoLogico[destino.Y, destino.X] = peca.Tipo;
-
-        return true;
-    }
-
     public void MoverPeca(Vector2I de, Vector2I For)
     {
-        estadoLogico[For.Y, For.X] = Ocupacao.Mosca;
+        estadoLogico[For.Y, For.X] = estadoLogico[For.Y,de.X];
         estadoLogico[de.Y, de.X] = Ocupacao.Vazio;
 
         var peca = pecasVisuais[de.Y, de.X];
@@ -190,6 +156,46 @@ public partial class Board : Node2D
         destino?.QueueFree(); // Mata a peça se houver
         pecasVisuais[For.Y, For.X] = peca;
         pecasVisuais[de.Y, de.X] = null;
+    }
+    public bool TentarMoverPeca(Peca peca, Vector2I destino)
+    {
+        // Verifica se destino está dentro do tabuleiro
+        if (!DentroDoTabuleiro(destino))
+            return false;
+
+        // Verifica se a movimentação é válida com base na peça
+        var destinoOcupacao = estadoLogico[destino.X, destino.Y];
+
+        // Só pode mover em direções válidas — aqui você pode adicionar validações extras
+        if (peca.Tipo == Ocupacao.Mosca && destinoOcupacao == Ocupacao.Guarda)
+        {
+            var guarda = EncontrarPecaEm(destino);
+            if (destinoOcupacao == Ocupacao.Guarda)
+            {
+                var Guarda = EncontrarPecaEm(destino);
+                if (Guarda != null)
+                {
+                    Guarda.QueueFree(); // remove guarda do jogo
+
+                    // Atualiza o estado lógico e visual
+                    estadoLogico[peca.IndiceAtual.Y, peca.IndiceAtual.X] = Ocupacao.Vazio;
+                    estadoLogico[destino.Y, destino.X] = Ocupacao.Mosca;
+
+                    pecasVisuais[destino.Y, destino.X] = pecasVisuais[peca.IndiceAtual.Y, peca.IndiceAtual.X];
+                    pecasVisuais[peca.IndiceAtual.Y, peca.IndiceAtual.X] = null;
+
+                    return true;
+                }
+            }
+
+        }
+        else if (peca.Tipo == Ocupacao.Guarda && destinoOcupacao == Ocupacao.Vazio)
+        {
+            MoverPeca(peca.IndiceAtual, destino);
+            return true;
+        }
+
+        return false;
     }
     
 }

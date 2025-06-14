@@ -1,3 +1,5 @@
+using System;
+using System.Diagnostics;
 using Godot;
 
 public partial class Guarda : Peca
@@ -10,6 +12,7 @@ public partial class Guarda : Peca
     {
         posicaoinicial = GlobalPosition;
         Tipo = Board.Ocupacao.Guarda;
+        gameManager = GetTree().Root.GetNode<GameManager>("Node2D/GameManager");
     }
 
     public override void _Process(double delta)
@@ -28,7 +31,7 @@ public partial class Guarda : Peca
             {
                 // Só deixa clicar se for a vez do Guarda
                 if (gameManager.TurnoAtual != GameManager.QuemJoga.Guarda)
-                    return;
+                    return ;
                 Vector2 mousePos = GetGlobalMousePosition();
                 var sprite = GetNode<Sprite2D>("Guarda_S");
                 var spriteSize = sprite.Texture.GetSize();
@@ -48,10 +51,10 @@ public partial class Guarda : Peca
                 
                 Vector2 finalPos = GlobalPosition;
                 Vector2I destinoLogico = board.PosicaoParaIndice(finalPos);
-                Vector2I origemLogica = board.PosicaoParaIndice(posicaoinicial);
 
-                // Tenta mover no board
-                bool movimentoValido = board.TentarMoverPeca(this, origemLogica, destinoLogico);
+                Vector2I origemLogica = board.PosicaoParaIndice(posicaoinicial);
+                IndiceAtual = origemLogica;
+                bool movimentoValido = board.TentarMoverPeca(this, destinoLogico);
 
                 if (movimentoValido)
                 {

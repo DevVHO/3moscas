@@ -11,6 +11,7 @@ public partial class Mosqueteiro : Peca
         base._Ready();
         posicaoinicial = GlobalPosition;
         Tipo = Board.Ocupacao.Mosca;
+        gameManager = GetTree().Root.GetNode<GameManager>("Node2D/GameManager");
     }
 
     public override void _Process(double delta)
@@ -25,47 +26,50 @@ public partial class Mosqueteiro : Peca
     {
         if (@event is InputEventMouseButton mouseEvent)
         {
-            if (mouseEvent.Pressed && mouseEvent.ButtonIndex == MouseButton.Left)
+            if (mouseEvent.ButtonIndex == MouseButton.Left)
             {
-                // Só deixa clicar se for a vez do Guarda
-                if (gameManager.TurnoAtual != GameManager.QuemJoga.Mosca)
-                    return;
-
-                Vector2 mousePos = GetGlobalMousePosition();
-                var sprite = GetNode<Sprite2D>("Mosqueteiro_S");
-
-                var spriteSize = sprite.Texture.GetSize();
-                var spriteRect = new Rect2(GlobalPosition - spriteSize / 2, spriteSize);
-
-                if (spriteRect.HasPoint(mousePos))
+                if (mouseEvent.Pressed)
                 {
-                    carregando = true;
-                    mouseOffset = mousePos - GlobalPosition;
-                    ZIndex = 2;
+                    if (gameManager.TurnoAtual != GameManager.QuemJoga.Mosca)
+                        return;
+
+                    var sprite = GetNode<Sprite2D>("Mosqueteiro_S");
+                    Vector2 mousePos = GetGlobalMousePosition();
+                    var spriteSize = sprite.Texture.GetSize();
+                    var spriteRect = new Rect2(GlobalPosition - spriteSize / 2, spriteSize);
+
+                    if (spriteRect.HasPoint(mousePos))
+                    {
+                        carregando = true;
+                        mouseOffset = mousePos - GlobalPosition;
+                        ZIndex = 2;
+                    }
+                }
+                else if (carregando)
+                {
+                    carregando = false;
+                    ZIndex = 1;
+
+                    Vector2 mousePos = GetGlobalMousePosition();
+                    Vector2I destino = board.PosicaoParaIndice(mousePos);
+
+                    if (board.TentarMoverPeca(this, destino))
+                    {
+                        // Sucesso
+                        IndiceAtual = destino;
+                        GlobalPosition = board.IndiceParaPosicao(destino);
+                        gameManager.PassarTurno();
+                    }
+                    else
+                    {
+                        // Falha → volta à posição original
+                        GlobalPosition = board.IndiceParaPosicao(IndiceAtual);
+                    }
                 }
             }
-            else if (!mouseEvent.Pressed && carregando)
-            {
-                carregando = false;
-                ZIndex = 1;
-
-                Vector2 destinoVisual = GlobalPosition;
-                Vector2I destinoLogico = board.PosicaoParaIndice(destinoVisual);
-
-                if (board.PodeMover(IndiceAtual, destinoLogico))
-                {
-                    board.MoverPeca(IndiceAtual, destinoLogico);
-                    IndiceAtual = destinoLogico;
-                    GlobalPosition = board.IndiceParaPosicao(destinoLogico);
-                    gameManager.PassarTurno();
-                }
-                else
-                {
-                    GlobalPosition = posicaoinicial;
-                }
-                    
-            }
-
         }
     }
+
+
+
 }
