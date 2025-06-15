@@ -1,5 +1,4 @@
 using Godot;
-using System;
 
 public partial class Peca : Node2D
 {
@@ -10,10 +9,16 @@ public partial class Peca : Node2D
 
     public override void _Ready()
     {
-        // Gridmanager é o pai, e tem o script Board
-        board = GetParent() as Board;
+        // Opção 2: Se precisar buscar pelo caminho (mais seguro)
 
-        // Sobe para o Node2D e procura o GameManager
-        gameManager = GetTree().Root.GetNode<GameManager>("Node2D/GameManager");
+        board = GetNode<Board>("/root/Node2D/Gridmanager");
+
+        // GameManager é irmão do Gridmanager
+        gameManager = GetNode<GameManager>("/root/Node2D/GameManager");
+    }
+    public void UpdateVisualPosition()
+    {
+        if (board != null)
+            Position = board.IndiceParaPosicao(IndiceAtual);
     }
 }

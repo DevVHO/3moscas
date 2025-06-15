@@ -32,17 +32,16 @@ public partial class Board : Node2D
         Node2D cellTemp = Cellscene.Instantiate<Node2D>();
         Sprite2D spritecell = cellTemp.GetNode<Sprite2D>("Sprite2D");
         Vector2 CellSize = spritecell.Texture.GetSize();
-        Vector2 CellScale = cellTemp.Scale;
+        var CellScale = cellTemp.Scale;
+        GD.Print(CellScale);
         cellTemp.QueueFree();
-        //Tamanho da grid
-        float gridWidth = columns * CellSize.X * CellScale.X;
-        float gridHeight = rows * CellSize.Y * CellScale.Y;
-        Vector2 screenSize = GetViewport().GetVisibleRect().Size;
-        Vector2 Offset = (screenSize - new Vector2(gridWidth, gridHeight + 40)) / 2;
-
+        
         //Criei 2 arrays para conseguir separar o visual para o Lógico
         estadoLogico = new Ocupacao[rows, columns];
         pecasVisuais = new Node2D[rows, columns];
+        cellWidth = (int)(CellSize.X * CellScale.X);
+        cellHeight = (int)(CellSize.Y * CellScale.Y);
+        offset = target.GlobalPosition; 
 
 
         for (int y = 0; y < rows; y++)
@@ -50,7 +49,7 @@ public partial class Board : Node2D
             for (int x = 0; x < columns; x++)
             {
                 //Posição Visual
-                Vector2 pos = Offset + new Vector2(x * CellSize.X * CellScale.X, y * CellSize.Y * CellScale.Y);
+                Vector2 pos = new Vector2(x * CellSize.X * CellScale.X, y * CellSize.Y * CellScale.Y);
 
                 //Instaciar uma célula
                 Node2D cellInstance = Cellscene.Instantiate<Node2D>();
@@ -59,8 +58,6 @@ public partial class Board : Node2D
                 target.AddChild(cellInstance);
                 // Salva referência na matriz
                 grid[y, x] = cellInstance;
-
-                //Estado Lógico
 
 
                 char currentChar = boardMatrixChars[y, x];
@@ -145,57 +142,99 @@ public partial class Board : Node2D
         if (!DentroDoTabuleiro(indice)) return null;
         return pecasVisuais[indice.Y, indice.X];
     }
-    public void MoverPeca(Vector2I de, Vector2I For)
-    {
-        estadoLogico[For.Y, For.X] = estadoLogico[For.Y,de.X];
-        estadoLogico[de.Y, de.X] = Ocupacao.Vazio;
 
-        var peca = pecasVisuais[de.Y, de.X];
-        var destino = pecasVisuais[For.Y, For.X];
-
-        destino?.QueueFree(); // Mata a peça se houver
-        pecasVisuais[For.Y, For.X] = peca;
-        pecasVisuais[de.Y, de.X] = null;
-    }
     public bool TentarMoverPeca(Peca peca, Vector2I destino)
     {
-        // Verifica se destino está dentro do tabuleiro
+        // 1. Verificação básica do tabuleiro
         if (!DentroDoTabuleiro(destino))
-            return false;
-
-        // Verifica se a movimentação é válida com base na peça
-        var destinoOcupacao = estadoLogico[destino.X, destino.Y];
-
-        // Só pode mover em direções válidas — aqui você pode adicionar validações extras
-        if (peca.Tipo == Ocupacao.Mosca && destinoOcupacao == Ocupacao.Guarda)
         {
-            var guarda = EncontrarPecaEm(destino);
-            if (destinoOcupacao == Ocupacao.Guarda)
+            GD.Print("Destino fora do tabuleiro");
+            peca.Position = IndiceParaPosicao(peca.IndiceAtual); // Garante o retorno visual
+            return false;
+        }
+
+        Vector2I origem = peca.IndiceAtual;
+        
+        // 2. Verifica se está tentando mover para a mesma posição
+        if (destino == origem)
+        {
+            GD.Print("Movimento para mesma posição");
+            peca.Position = IndiceParaPosicao(origem); // Garante o retorno visual
+            return false;
+        }
+
+        // 3. Cálculo de distância - movimento deve ser exatamente 1 casa
+        int dx = Mathf.Abs(destino.X - origem.X);
+        int dy = Mathf.Abs(destino.Y - origem.Y);
+        
+        // Movimento válido deve ser adjacente (horizontal/vertical) e apenas 1 casa
+        bool movimentoValido = (dx == 1 && dy == 0) || (dx == 0 && dy == 1);
+
+        if (!movimentoValido)
+        {
+            GD.Print("Movimento inválido: deve ser adjacente horizontal/vertical");
+            peca.Position = IndiceParaPosicao(origem); // Garante o retorno visual
+            return false;
+        }
+
+        // 4. Lógica específica para Mosqueteiros
+        if (peca.Tipo == Ocupacao.Mosca)
+        {
+            // Mosqueteiro só pode mover para posições com guardas
+            if (estadoLogico[destino.Y, destino.X] != Ocupacao.Guarda)
             {
-                var Guarda = EncontrarPecaEm(destino);
-                if (Guarda != null)
-                {
-                    Guarda.QueueFree(); // remove guarda do jogo
-
-                    // Atualiza o estado lógico e visual
-                    estadoLogico[peca.IndiceAtual.Y, peca.IndiceAtual.X] = Ocupacao.Vazio;
-                    estadoLogico[destino.Y, destino.X] = Ocupacao.Mosca;
-
-                    pecasVisuais[destino.Y, destino.X] = pecasVisuais[peca.IndiceAtual.Y, peca.IndiceAtual.X];
-                    pecasVisuais[peca.IndiceAtual.Y, peca.IndiceAtual.X] = null;
-
-                    return true;
-                }
+                GD.Print("Mosqueteiro: Destino deve conter um guarda");
+                peca.Position = IndiceParaPosicao(origem);
+                return false;
             }
 
+            // Executa a captura
+            estadoLogico[origem.Y, origem.X] = Ocupacao.Vazio;
+            estadoLogico[destino.Y, destino.X] = Ocupacao.Mosca;
+
+            // Remove o guarda do destino
+            pecasVisuais[destino.Y, destino.X]?.QueueFree();
+            
+            // Move o mosqueteiro
+            pecasVisuais[destino.Y, destino.X] = pecasVisuais[origem.Y, origem.X];
+            pecasVisuais[origem.Y, origem.X] = null;
+            
+            // Atualiza ambos: lógico e visual
+            peca.IndiceAtual = destino;
+            peca.Position = IndiceParaPosicao(destino);
+            
+            return true;
         }
-        else if (peca.Tipo == Ocupacao.Guarda && destinoOcupacao == Ocupacao.Vazio)
+        // 5. Lógica específica para Guardas
+        else if (peca.Tipo == Ocupacao.Guarda)
         {
-            MoverPeca(peca.IndiceAtual, destino);
+            // Guarda só pode mover para posições vazias
+            if (estadoLogico[destino.Y, destino.X] != Ocupacao.Vazio)
+            {
+                GD.Print("Guarda: Destino deve estar vazio");
+                peca.Position = IndiceParaPosicao(origem);
+                return false;
+            }
+
+            // Executa o movimento
+            estadoLogico[origem.Y, origem.X] = Ocupacao.Vazio;
+            estadoLogico[destino.Y, destino.X] = Ocupacao.Guarda;
+
+            // Move o guarda
+            pecasVisuais[destino.Y, destino.X] = pecasVisuais[origem.Y, origem.X];
+            pecasVisuais[origem.Y, origem.X] = null;
+            
+            // Atualiza ambos: lógico e visual
+            peca.IndiceAtual = destino;
+            peca.Position = IndiceParaPosicao(destino);
+            
             return true;
         }
 
+        GD.Print("Tipo de peça desconhecido");
+        peca.Position = IndiceParaPosicao(origem);
         return false;
     }
+
     
 }
