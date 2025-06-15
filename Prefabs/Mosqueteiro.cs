@@ -74,20 +74,13 @@ public partial class Mosqueteiro : Node2D
 
             // Se estiver em cima
                         if (guardArea.Intersects(thisArea))
-{
-    Vector2 distância = guard.GlobalPosition - posicaoinicial;
-
-    // Permite apenas movimentos verticais (acima ou abaixo)
-    if (Mathf.IsEqualApprox(distância.X, 0) && Mathf.Abs(distância.Y) > 0)
-    {
-        GlobalPosition = guard.GlobalPosition;
-        guard.QueueFree(); // Deletar
-        gameManager.PassarTurno();
-        matado = true;
-        break;
-    }
-}
-
+                        {
+                            GlobalPosition = guard.GlobalPosition;
+                            guard.QueueFree(); // Deletar
+                            gameManager.PassarTurno();
+                            matado = true;
+                            break;
+                        }
         }
     }
 
