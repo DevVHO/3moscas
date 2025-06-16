@@ -1,49 +1,39 @@
 using Godot;
+using System;
 
 public partial class Cell : Node2D
 {
-    public Vector2I indice;
-    private Board board;
+    public Vector2I GridPosition { get; set; } // Ex: (x, y)
+    public Board.Ocupacao EstadoAtual { get; private set; }
+
+    private Sprite2D sprite;
 
     public override void _Ready()
     {
-        board = GetParent().GetParent<Board>();
-        indice = board.PosicaoParaIndice(Position);
-
-        GD.Print($"Célula criada em Índice={indice}, Posição={Position}");
-
+        sprite = GetNode<Sprite2D>("Sprite2D");
     }
 
-    public override void _Input(InputEvent @event)
+    public void DefinirEstado(Board.Ocupacao estado)
     {
-        if (@event is InputEventMouseButton mouseEvent && mouseEvent.ButtonIndex == MouseButton.Left && mouseEvent.Pressed)
-        {
-            var localMouse = GetGlobalMousePosition();
-            var rect = new Rect2(GlobalPosition - new Vector2(32, 32), new Vector2(64, 64)); // ajuste conforme seu sprite
+        EstadoAtual = estado;
 
-            if (rect.HasPoint(localMouse))
-            {
-                board.TentarMoverPeca(board.pecaSelecionada, indice);
-            }
+        // Aqui você pode mudar cor, brilho, highlight, etc.
+        switch (estado)
+        {
+            case Board.Ocupacao.Mosca:
+                sprite.Modulate = new Color(1f, 1f, 1f); // branco
+                break;
+            case Board.Ocupacao.Guarda:
+                sprite.Modulate = new Color(0.7f, 0.7f, 0.7f); // cinza
+                break;
+            case Board.Ocupacao.Vazio:
+                sprite.Modulate = new Color(0.3f, 0.3f, 0.3f); // escuro
+                break;
         }
     }
 
-    public void Destacar()
+    public void Realcar(bool ativo)
     {
-        GetNode<Sprite2D>("Sprite2D").Modulate = new Color(1, 1, 0); // amarelo
+        sprite.SelfModulate = ativo ? new Color(1f, 1f, 0f) : Colors.White;
     }
-
-    public void Resetar()
-    {
-        GetNode<Sprite2D>("Sprite2D").Modulate = new Color(1, 1, 1); // branco
-    }
-    public Vector2 IndiceParaPosicao(Vector2I indice)
-{
-    int cellSize = 216; // DEVE SER O MESMO VALOR USADO NO GenerateGrid()!
-    return new Vector2(
-+        indice.X * cellSize + cellSize / 2, // Centraliza na célula
-        indice.Y * cellSize + cellSize / 2
-    );
 }
-}
-

@@ -2,23 +2,19 @@ using Godot;
 
 public partial class Peca : Node2D
 {
-    public Vector2I IndiceAtual { get; set; }
-    public Board.Ocupacao Tipo { get; set; }
-    protected Board board;
-    protected GameManager gameManager;
+	public Vector2I PosicaoLogica { get; set; }
 
-    public override void _Ready()
-    {
-        // Opção 2: Se precisar buscar pelo caminho (mais seguro)
+	protected Board board;
+	protected GameManager gameManager;
+	public override void _Ready()
+	{
+		gameManager = GetTree().Root.GetNode<GameManager>("Node2D/GameManager");
+		board = GetParent().GetParent<Board>(); // Supondo que Target é filho direto do Board
+	}
 
-        board = GetNode<Board>("/root/Node2D/Gridmanager");
-
-        // GameManager é irmão do Gridmanager
-        gameManager = GetNode<GameManager>("/root/Node2D/GameManager");
-    }
-    public void UpdateVisualPosition()
-    {
-        if (board != null)
-            Position = board.IndiceParaPosicao(IndiceAtual);
-    }
+	public void AtualizarPosicaoVisual(int cellWidth, int cellHeight)
+	{
+		Position = new Vector2(PosicaoLogica.X * cellWidth, PosicaoLogica.Y * cellHeight);
+	}
+	
 }
