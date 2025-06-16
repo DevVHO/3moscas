@@ -2,7 +2,6 @@ using Godot;
 
 public partial class Mosqueteiro : Peca
 {
-
     public override void _Input(InputEvent @event)
     {
         if (gameManager.TurnoAtual != GameManager.QuemJoga.Mosqueteiro)
@@ -22,21 +21,23 @@ public partial class Mosqueteiro : Peca
 
             if (spriteRect.HasPoint(localMouse))
             {
-                if (!estaSelecionado)
+                
+                if (!estaSelecionado && board.pecaSelecionada == null)
                 {
                     // Primeiro clique: seleciona e realça
                     estaSelecionado = true;
                     board.RealcarCasasVizinhas(PosicaoLogica, true);
+                    board.pecaSelecionada = this;
                     GD.Print($"[SELECIONADO] Mosqueteiro na posição {PosicaoLogica}");
                 }
-                else
+                else if (estaSelecionado)
                 {
                     // Segundo clique: desmarca e remove realce
                     estaSelecionado = false;
+                    board.pecaSelecionada = null;
                     board.RealcarCasasVizinhas(PosicaoLogica, false);
                     GD.Print($"[DESELECIONADO] Mosqueteiro na posição {PosicaoLogica}");
                 }
-
                 ZIndex = estaSelecionado ? 2 : 1;
             }
         }

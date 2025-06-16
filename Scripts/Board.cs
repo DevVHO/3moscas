@@ -15,6 +15,7 @@ public partial class Board : Node2D
     public Peca pecaSelecionada = null;
     public Peca PecaSelecionada => pecaSelecionada;
 
+
     [Export] public PackedScene Cellscene;
     [Export] public PackedScene Guarda;
     [Export] public PackedScene Mosca;
@@ -23,7 +24,6 @@ public partial class Board : Node2D
         //O grid serve como um atributo interno dentro dessa classe
         grid = new Node2D[rows, columns];
         //Pegar a position de target para que assim eu consiga instanciar através dela
-
     }
     public void SelecionarPecaParaAtaque(Peca peca)
     {
@@ -114,7 +114,6 @@ public partial class Board : Node2D
             }
         }
     }
-
     private char[,] boardMatrixChars = new char[5, 5]
     {
         { 'G', 'G', 'G', 'G', 'M' },
@@ -148,10 +147,10 @@ public partial class Board : Node2D
         // Lista das posições vizinhas (sem incluir a própria)
         Vector2I[] vizinhos = new Vector2I[]
         {
-            new Vector2I(x - 1, y),
-            new Vector2I(x + 1, y),
-            new Vector2I(x, y - 1),
-            new Vector2I(x, y + 1),
+            new Vector2I(x - 1, y), //esquerda
+            new Vector2I(x + 1, y), // direita
+            new Vector2I(x, y - 1), //baixo
+            new Vector2I(x, y + 1), //cima
         };
 
         foreach (var vizinho in vizinhos)
@@ -166,5 +165,4 @@ public partial class Board : Node2D
             }
         }
     }
-    
 }

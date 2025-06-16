@@ -16,7 +16,7 @@ public partial class Cell : Node2D
     {
         EstadoAtual = estado;
 
-        // Aqui você pode mudar cor, brilho, highlight, etc.
+        // Aqui você pode mudar cor, brilho, highlight E >>>ETC<<<. :)
         switch (estado)
         {
             case Board.Ocupacao.Mosca:

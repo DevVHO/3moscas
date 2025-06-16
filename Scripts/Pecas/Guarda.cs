@@ -22,19 +22,21 @@ public partial class Guarda : Peca
 
             if (spriteRect.HasPoint(localMouse))
             {
-                if (!estaSelecionado)
+                if (!estaSelecionado && board.pecaSelecionada == null)
                 {
                     // Primeiro clique: seleciona e realça
                     estaSelecionado = true;
+                    board.pecaSelecionada = this;
                     board.RealcarCasasVizinhas(PosicaoLogica, true);
                     GD.Print($"[SELECIONADO] Guarda na posição {PosicaoLogica}");
                 }
-                else
+                else if (estaSelecionado)
                 {
                     // Segundo clique: desmarca e remove realce
                     estaSelecionado = false;
+                    board.pecaSelecionada = null;
                     board.RealcarCasasVizinhas(PosicaoLogica, false);
-                    GD.Print($"[DESELECIONADO] Guarda na posição {PosicaoLogica}");
+                    GD.Print($"[DESELECIONADO] Guarda na posição {PosicaoLogica}");      
                 }
 
                 ZIndex = estaSelecionado ? 2 : 1;
