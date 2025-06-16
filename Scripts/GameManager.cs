@@ -3,6 +3,8 @@ using System;
 
 public partial class GameManager : Node2D
 {
+    public static GameManager Instance { get; private set; }
+
     public enum QuemJoga
     {
         Mosca,
@@ -24,6 +26,8 @@ public partial class GameManager : Node2D
 
     public override void _Ready()
     {
+        Instance = this;
+
         var board = GetParent().GetNode<Board>("Gridmanager");
         board.GenerateGrid();
 
@@ -33,5 +37,6 @@ public partial class GameManager : Node2D
     public void PassarTurno()
     {
         TurnoAtual = (TurnoAtual == QuemJoga.Guarda) ? QuemJoga.Mosca : QuemJoga.Guarda;
+        GD.Print("Agora é o turno de: ", TurnoAtual);
     }
 }
