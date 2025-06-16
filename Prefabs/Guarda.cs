@@ -77,6 +77,7 @@ public partial class Guarda : Node2D
     if (Mathf.IsEqualApprox(distância.X, 0) && Mathf.Abs(distância.Y) > 0)
     {
         GlobalPosition = tile.GlobalPosition;
+        tile.QueueFree(); // Deletar
         gameManager.PassarTurno();
         matado = true;
         break;
