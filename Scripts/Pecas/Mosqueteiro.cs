@@ -2,18 +2,19 @@ using Godot;
 
 public partial class Mosqueteiro : Peca
 {
+
     public override void _Input(InputEvent @event)
     {
-        if (@event is InputEventMouseButton mouseEvent 
-            && mouseEvent.ButtonIndex == MouseButton.Left 
+        if (gameManager.TurnoAtual != GameManager.QuemJoga.Mosqueteiro)
+            return;
+
+        if (@event is InputEventMouseButton mouseEvent
+            && mouseEvent.ButtonIndex == MouseButton.Left
             && mouseEvent.Pressed)
         {
-            // Pega a posição do mouse em coordenadas locais da peça
             Vector2 localMouse = ToLocal(GetGlobalMousePosition());
-
             var sprite = GetNode<Sprite2D>("Mosqueteiro_S");
 
-            // Retângulo do sprite centrado na origem (posição da peça)
             Rect2 spriteRect = new Rect2(
                 -sprite.Texture.GetSize() / 2,
                 sprite.Texture.GetSize()
@@ -21,8 +22,22 @@ public partial class Mosqueteiro : Peca
 
             if (spriteRect.HasPoint(localMouse))
             {
-                GD.Print($"[CLICK] Tipo: Mosqueteiro | Posição Lógica: {PosicaoLogica}");
-                ZIndex = 2;
+                if (!estaSelecionado)
+                {
+                    // Primeiro clique: seleciona e realça
+                    estaSelecionado = true;
+                    board.RealcarCasasVizinhas(PosicaoLogica, true);
+                    GD.Print($"[SELECIONADO] Mosqueteiro na posição {PosicaoLogica}");
+                }
+                else
+                {
+                    // Segundo clique: desmarca e remove realce
+                    estaSelecionado = false;
+                    board.RealcarCasasVizinhas(PosicaoLogica, false);
+                    GD.Print($"[DESELECIONADO] Mosqueteiro na posição {PosicaoLogica}");
+                }
+
+                ZIndex = estaSelecionado ? 2 : 1;
             }
         }
     }

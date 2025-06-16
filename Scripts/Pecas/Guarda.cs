@@ -2,18 +2,19 @@ using Godot;
 
 public partial class Guarda : Peca
 {
+
     public override void _Input(InputEvent @event)
     {
-        if (@event is InputEventMouseButton mouseEvent 
-            && mouseEvent.ButtonIndex == MouseButton.Left 
+        if (gameManager.TurnoAtual != GameManager.QuemJoga.Guarda)
+            return;
+
+        if (@event is InputEventMouseButton mouseEvent
+            && mouseEvent.ButtonIndex == MouseButton.Left
             && mouseEvent.Pressed)
         {
-            // Converte mouse global para local (relativo à peça)
             Vector2 localMouse = ToLocal(GetGlobalMousePosition());
+            var sprite = GetNode<Sprite2D>("Mosqueteiro_S");
 
-            var sprite = GetNode<Sprite2D>("Guarda_S");
-
-            // Retângulo centrado na origem (posição da peça)
             Rect2 spriteRect = new Rect2(
                 -sprite.Texture.GetSize() / 2,
                 sprite.Texture.GetSize()
@@ -21,8 +22,22 @@ public partial class Guarda : Peca
 
             if (spriteRect.HasPoint(localMouse))
             {
-                GD.Print($"[CLICK] Tipo: Guarda | Posição Lógica: {PosicaoLogica}");
-                ZIndex = 2;
+                if (!estaSelecionado)
+                {
+                    // Primeiro clique: seleciona e realça
+                    estaSelecionado = true;
+                    board.RealcarCasasVizinhas(PosicaoLogica, true);
+                    GD.Print($"[SELECIONADO] Guarda na posição {PosicaoLogica}");
+                }
+                else
+                {
+                    // Segundo clique: desmarca e remove realce
+                    estaSelecionado = false;
+                    board.RealcarCasasVizinhas(PosicaoLogica, false);
+                    GD.Print($"[DESELECIONADO] Guarda na posição {PosicaoLogica}");
+                }
+
+                ZIndex = estaSelecionado ? 2 : 1;
             }
         }
     }

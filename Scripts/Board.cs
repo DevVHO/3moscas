@@ -12,7 +12,8 @@ public partial class Board : Node2D
     private Node2D[,] grid;
     private Ocupacao[,] estadoLogico;
     private Node2D[,] pecasVisuais;
-
+    public Peca pecaSelecionada = null;
+    public Peca PecaSelecionada => pecaSelecionada;
 
     [Export] public PackedScene Cellscene;
     [Export] public PackedScene Guarda;
@@ -24,8 +25,41 @@ public partial class Board : Node2D
         //Pegar a position de target para que assim eu consiga instanciar através dela
 
     }
+    public void SelecionarPecaParaAtaque(Peca peca)
+    {
+        pecaSelecionada = peca;
+        RealcarCasasVizinhas(peca.PosicaoLogica, true);
+    }
 
+    public void CancelarSelecao()
+    {
+        if (pecaSelecionada != null)
+        {
+            RealcarCasasVizinhas(pecaSelecionada.PosicaoLogica, false);
+            pecaSelecionada = null;
+        }
+    }
 
+    public bool TentarAtacar(Vector2I posAlvo)
+    {
+        if (pecaSelecionada == null)
+            return false;
+
+        // Verifica se posAlvo está na lista de casas vizinhas da peça selecionada
+        int dx = Math.Abs(posAlvo.X - pecaSelecionada.PosicaoLogica.X);
+        int dy = Math.Abs(posAlvo.Y - pecaSelecionada.PosicaoLogica.Y);
+
+        if ((dx == 1 && dy == 0) || (dx == 0 && dy == 1)) // vizinho direto
+        {
+            // Implementa a lógica de ataque, exemplo:
+            GD.Print($"{pecaSelecionada.GetType().Name} ataca peça na posição {posAlvo}");
+
+            // Depois de atacar, cancela seleção e realce
+            CancelarSelecao();
+            return true;
+        }
+        return false;
+    }
     public void GenerateGrid()
     {
         var target = GetNode<Node2D>("Target");
@@ -83,7 +117,7 @@ public partial class Board : Node2D
 
     private char[,] boardMatrixChars = new char[5, 5]
     {
-        { 'G', 'G', 'G', 'G', 'M' },    
+        { 'G', 'G', 'G', 'G', 'M' },
         { 'G', 'G', 'G', 'G', 'G' },
         { 'G', 'G', 'M', 'G', 'G' },
         { 'G', 'G', 'G', 'G', 'G' },
@@ -106,4 +140,31 @@ public partial class Board : Node2D
         Mosca,
         Guarda
     }
+    public void RealcarCasasVizinhas(Vector2I pos, bool ativar)
+    {
+        int x = pos.X;
+        int y = pos.Y;
+
+        // Lista das posições vizinhas (sem incluir a própria)
+        Vector2I[] vizinhos = new Vector2I[]
+        {
+            new Vector2I(x - 1, y),
+            new Vector2I(x + 1, y),
+            new Vector2I(x, y - 1),
+            new Vector2I(x, y + 1),
+        };
+
+        foreach (var vizinho in vizinhos)
+        {
+            if (vizinho.X >= 0 && vizinho.X < columns && vizinho.Y >= 0 && vizinho.Y < rows)
+            {
+                var cell = grid[vizinho.Y, vizinho.X] as Cell;
+                if (cell != null)
+                {
+                    cell.Realcar(ativar);
+                }
+            }
+        }
+    }
+    
 }

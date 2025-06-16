@@ -5,7 +5,6 @@ public partial class Cell : Node2D
 {
     public Vector2I GridPosition { get; set; } // Ex: (x, y)
     public Board.Ocupacao EstadoAtual { get; private set; }
-
     private Sprite2D sprite;
 
     public override void _Ready()

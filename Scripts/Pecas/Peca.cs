@@ -3,6 +3,7 @@ using Godot;
 public partial class Peca : Node2D
 {
 	public Vector2I PosicaoLogica { get; set; }
+	protected bool estaSelecionado = false;
 
 	protected Board board;
 	protected GameManager gameManager;
