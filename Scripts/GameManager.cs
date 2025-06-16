@@ -3,6 +3,7 @@ using System;
 
 public partial class GameManager : Node2D
 {
+    public int numerodeselecionada;
     public enum QuemJoga
     {
         Mosqueteiro,

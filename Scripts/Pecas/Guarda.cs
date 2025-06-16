@@ -2,18 +2,17 @@ using Godot;
 
 public partial class Guarda : Peca
 {
-
     public override void _Input(InputEvent @event)
     {
         if (gameManager.TurnoAtual != GameManager.QuemJoga.Guarda)
             return;
 
-        if (@event is InputEventMouseButton mouseEvent
-            && mouseEvent.ButtonIndex == MouseButton.Left
-            && mouseEvent.Pressed)
+        if (@event is InputEventMouseButton mouseEvent &&
+            mouseEvent.ButtonIndex == MouseButton.Left &&
+            mouseEvent.Pressed)
         {
             Vector2 localMouse = ToLocal(GetGlobalMousePosition());
-            var sprite = GetNode<Sprite2D>("Mosqueteiro_S");
+            var sprite = GetNode<Sprite2D>("Guarda_S");
 
             Rect2 spriteRect = new Rect2(
                 -sprite.Texture.GetSize() / 2,
@@ -24,23 +23,47 @@ public partial class Guarda : Peca
             {
                 if (!estaSelecionado && board.pecaSelecionada == null)
                 {
-                    // Primeiro clique: seleciona e realça
+                    // Seleciona e realça casas vizinhas
                     estaSelecionado = true;
-                    board.pecaSelecionada = this;
                     board.RealcarCasasVizinhas(PosicaoLogica, true);
+                    board.pecaSelecionada = this;
                     GD.Print($"[SELECIONADO] Guarda na posição {PosicaoLogica}");
                 }
                 else if (estaSelecionado)
                 {
-                    // Segundo clique: desmarca e remove realce
+                    // Deseleciona se clicar novamente
+                    estaSelecionado = false;
+                    board.RealcarCasasVizinhas(PosicaoLogica, false);
+                    board.pecaSelecionada = null;
+                    GD.Print($"[DESELECIONADO] Guarda na posição {PosicaoLogica}");
+                }
+            }
+            else if (estaSelecionado)
+            {
+                // Clicou fora do sprite: tentar ação
+                Vector2 mouseNaBoard = GetGlobalMousePosition() - board.GlobalPosition;
+                Vector2I destino = board.PosicaoLocalParaLogica(mouseNaBoard);
+
+                if (board.PodeMoverOuAtacar(PosicaoLogica, destino))
+                {
+                    Vector2I origem = PosicaoLogica;
+
+                    board.MoverOuAtacar(origem, destino);
+
+                    PosicaoLogica = destino;
+                    AtualizarPosicaoVisual(board.cellWidth, board.cellHeight);
+
                     estaSelecionado = false;
                     board.pecaSelecionada = null;
-                    board.RealcarCasasVizinhas(PosicaoLogica, false);
-                    GD.Print($"[DESELECIONADO] Guarda na posição {PosicaoLogica}");      
-                }
+                    board.RealcarCasasVizinhas(origem, false);
 
-                ZIndex = estaSelecionado ? 2 : 1;
+                    gameManager.PassarTurno();
+
+                    GD.Print($"[AÇÃO] Guarda movido/atacado de {origem} para {destino}");
+                }
             }
+
+            ZIndex = estaSelecionado ? 2 : 1;
         }
     }
 }

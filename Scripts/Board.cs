@@ -6,14 +6,14 @@ public partial class Board : Node2D
 {
     public int rows = 5;
     public int columns = 5;
-    private int cellWidth;
-    private int cellHeight;
-    private Vector2 offset;
-    private Node2D[,] grid;
-    private Ocupacao[,] estadoLogico;
-    private Node2D[,] pecasVisuais;
+    public int cellWidth;
+    public int cellHeight;
+    public Node2D[,] grid;
+    public Ocupacao[,] estadoLogico;
+    public Node2D[,] pecasVisuais;
     public Peca pecaSelecionada = null;
     public Peca PecaSelecionada => pecaSelecionada;
+    public GameManager gameManager;
 
 
     [Export] public PackedScene Cellscene;
@@ -23,42 +23,8 @@ public partial class Board : Node2D
     {
         //O grid serve como um atributo interno dentro dessa classe
         grid = new Node2D[rows, columns];
+        gameManager = GetTree().Root.GetNode<GameManager>("Node2D/GameManager");
         //Pegar a position de target para que assim eu consiga instanciar através dela
-    }
-    public void SelecionarPecaParaAtaque(Peca peca)
-    {
-        pecaSelecionada = peca;
-        RealcarCasasVizinhas(peca.PosicaoLogica, true);
-    }
-
-    public void CancelarSelecao()
-    {
-        if (pecaSelecionada != null)
-        {
-            RealcarCasasVizinhas(pecaSelecionada.PosicaoLogica, false);
-            pecaSelecionada = null;
-        }
-    }
-
-    public bool TentarAtacar(Vector2I posAlvo)
-    {
-        if (pecaSelecionada == null)
-            return false;
-
-        // Verifica se posAlvo está na lista de casas vizinhas da peça selecionada
-        int dx = Math.Abs(posAlvo.X - pecaSelecionada.PosicaoLogica.X);
-        int dy = Math.Abs(posAlvo.Y - pecaSelecionada.PosicaoLogica.Y);
-
-        if ((dx == 1 && dy == 0) || (dx == 0 && dy == 1)) // vizinho direto
-        {
-            // Implementa a lógica de ataque, exemplo:
-            GD.Print($"{pecaSelecionada.GetType().Name} ataca peça na posição {posAlvo}");
-
-            // Depois de atacar, cancela seleção e realce
-            CancelarSelecao();
-            return true;
-        }
-        return false;
     }
     public void GenerateGrid()
     {
@@ -114,16 +80,17 @@ public partial class Board : Node2D
             }
         }
     }
-    private char[,] boardMatrixChars = new char[5, 5]
+    #region enumerados
+    public char[,] boardMatrixChars = new char[5, 5]
     {
         { 'G', 'G', 'G', 'G', 'M' },
         { 'G', 'G', 'G', 'G', 'G' },
         { 'G', 'G', 'M', 'G', 'G' },
-        { 'G', 'G', 'G', 'G', 'G' },
+        { 'G', 'G', 'V', 'G', 'G' },
         { 'M', 'G', 'G', 'G', 'G' }
     };
 
-    private Ocupacao CharParaOcupacao(char c)
+    public Ocupacao CharParaOcupacao(char c)
     {
         return c switch
         {
@@ -139,7 +106,71 @@ public partial class Board : Node2D
         Mosca,
         Guarda
     }
+    #endregion fimenumerados
+    public void MoverPeca(Vector2I origem, Vector2I destino, Ocupacao novaOcupacao)
+    {
+        var peca = pecasVisuais[origem.Y, origem.X];
+        pecasVisuais[origem.Y, origem.X] = null;
+        pecasVisuais[destino.Y, destino.X] = peca;
+
+        estadoLogico[origem.Y, origem.X] = Ocupacao.Vazio;
+        estadoLogico[destino.Y, destino.X] = novaOcupacao;
+    }
+    public void MoverOuAtacar(Vector2I origem, Vector2I destino)
+    {
+        Ocupacao origemOcupacao = estadoLogico[origem.Y, origem.X];
+        Ocupacao destinoOcupacao = estadoLogico[destino.Y, destino.X];
+
+        if (origemOcupacao == Ocupacao.Guarda)
+        {
+            // Movimento normal, destino deve estar vazio
+            MoverPeca(origem, destino, Ocupacao.Guarda);
+        }
+        else if (origemOcupacao == Ocupacao.Mosca && destinoOcupacao == Ocupacao.Guarda)
+        {
+            // Ataque do Mosqueteiro, remove Guarda e move Mosqueteiro
+            // Remove visual do Guarda
+            var pecaAtacada = pecasVisuais[destino.Y, destino.X];
+            if (pecaAtacada != null)
+                pecaAtacada.QueueFree();
+
+            // Atualiza arrays e estado lógico
+            pecasVisuais[destino.Y, destino.X] = pecasVisuais[origem.Y, origem.X];
+            pecasVisuais[origem.Y, origem.X] = null;
+
+            estadoLogico[destino.Y, destino.X] = Ocupacao.Mosca;
+            estadoLogico[origem.Y, origem.X] = Ocupacao.Vazio;
+        }
+    }
+    public bool EstaDentroDoTabuleiro(Vector2I pos)
+    {
+        return pos.X >= 0 && pos.X < columns && pos.Y >= 0 && pos.Y < rows;
+    }
+
+    public bool PodeMoverOuAtacar(Vector2I origem, Vector2I destino)
+    {
+        if (!EstaDentroDoTabuleiro(destino))
+            return false;
+
+        Ocupacao origemOcupacao = estadoLogico[origem.Y, origem.X];
+        Ocupacao destinoOcupacao = estadoLogico[destino.Y, destino.X];
+
+        if (origemOcupacao == Ocupacao.Guarda)
+        {
+            // Guarda só pode mover para casa vazia adjacente
+            return destinoOcupacao == Ocupacao.Vazio && EstaCelulaRealcada(destino);
+        }
+        else if (origemOcupacao == Ocupacao.Mosca)
+        {
+            // Mosqueteiro só pode atacar Guarda adjacente
+            return destinoOcupacao == Ocupacao.Guarda && EstaCelulaRealcada(destino);
+        }
+
+        return false;
+    }
+
     public void RealcarCasasVizinhas(Vector2I pos, bool ativar)
+
     {
         int x = pos.X;
         int y = pos.Y;
@@ -157,12 +188,66 @@ public partial class Board : Node2D
         {
             if (vizinho.X >= 0 && vizinho.X < columns && vizinho.Y >= 0 && vizinho.Y < rows)
             {
+                var peca = pecasVisuais[vizinho.Y, vizinho.X] as Peca;
                 var cell = grid[vizinho.Y, vizinho.X] as Cell;
                 if (cell != null)
                 {
-                    cell.Realcar(ativar);
+                    if (gameManager.TurnoAtual == GameManager.QuemJoga.Mosqueteiro)
+                    {
+                        // Mosqueteiro só pode atacar Guarda
+                        if (peca is Guarda)
+                        {
+                            cell.Realcar(ativar);
+                            cell.EstaRealcada = ativar;
+                        }
+                        else
+                        {
+                            cell.Realcar(false);
+                            cell.EstaRealcada = false;
+                        }
+                    }
+                    else if (gameManager.TurnoAtual == GameManager.QuemJoga.Guarda)
+                    {
+                        // Guarda só pode andar para casas vazias
+                        if (estadoLogico[vizinho.Y, vizinho.X] == Ocupacao.Vazio)
+                        {
+                            cell.Realcar(ativar);
+                            cell.EstaRealcada = ativar;
+                        }
+                        else
+                        {
+                            cell.Realcar(false);
+                            cell.EstaRealcada = false;
+                        }
+                    }
                 }
             }
         }
     }
+    public bool EstaCelulaRealcada(Vector2I pos)
+    {
+        if (!EstaDentroDoTabuleiro(pos))
+            return false;
+
+        var cell = grid[pos.Y, pos.X] as Cell;
+        if (cell != null)
+            return cell.EstaRealcada;
+
+        return false;
+    }
+    public Vector2I PosicaoLocalParaLogica(Vector2 posicaoLocal)
+    {
+        int x = (int)(posicaoLocal.X / cellWidth);
+        int y = (int)(posicaoLocal.Y / cellHeight);
+        return new Vector2I(x, y);
+    }
+    public Vector2I GetCelulaLogicaAPartirDoMouse(Vector2 globalMousePos)
+{
+    int col = (int)(globalMousePos.X / cellWidth);
+    int row = (int)(globalMousePos.Y / cellHeight);
+    return new Vector2I(col, row);
+}
+
+
+
 }
