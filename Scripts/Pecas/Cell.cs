@@ -19,4 +19,6 @@ public partial class Cell : Node2D
 	{
 		sprite.SelfModulate = ativo ? new Color(1f, 1f, 0f) : Colors.White;
 	}
+
+	
 }

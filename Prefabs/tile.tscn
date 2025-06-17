@@ -1,9 +1,12 @@
-[gd_scene load_steps=4 format=3 uid="uid://d2raeeiu2eckn"]
+[gd_scene load_steps=5 format=3 uid="uid://d2raeeiu2eckn"]
 
 [ext_resource type="Texture2D" uid="uid://cqwxffgig3utc" path="res://Resources/Tile.png" id="1_hacnt"]
 [ext_resource type="Script" uid="uid://3bx3rt7fgkoj" path="res://Scripts/Pecas/Cell.cs" id="1_odsai"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_hacnt"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_odsai"]
+size = Vector2(214, 214)
 
 [node name="Tile" type="Node2D"]
 material = SubResource("CanvasItemMaterial_hacnt")
@@ -11,3 +14,8 @@ script = ExtResource("1_odsai")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_hacnt")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_odsai")

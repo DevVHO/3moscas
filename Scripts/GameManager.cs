@@ -10,7 +10,7 @@ public partial class GameManager : Node2D
         Guarda
     }
 
-    public QuemJoga TurnoAtual { get; private set; } = QuemJoga.Mosqueteiro;
+    public QuemJoga TurnoAtual { get; private set; } = QuemJoga.Guarda;
 
     private Board board;
 
@@ -25,4 +25,5 @@ public partial class GameManager : Node2D
         TurnoAtual = TurnoAtual == QuemJoga.Mosqueteiro ? QuemJoga.Guarda : QuemJoga.Mosqueteiro;
         GD.Print($"Turno agora é do: {TurnoAtual}");
     }
+    
 }

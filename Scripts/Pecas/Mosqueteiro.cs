@@ -7,9 +7,9 @@ public partial class Mosqueteiro : Peca
         if (gameManager.TurnoAtual != GameManager.QuemJoga.Mosqueteiro)
             return;
 
-        if (@event is InputEventMouseButton mouseEvent &&
-            mouseEvent.ButtonIndex == MouseButton.Left &&
-            mouseEvent.Pressed)
+        if (@event is InputEventMouseButton mouseEvent
+            && mouseEvent.ButtonIndex == MouseButton.Left
+            && mouseEvent.Pressed)
         {
             Vector2 localMouse = ToLocal(GetGlobalMousePosition());
             var sprite = GetNode<Sprite2D>("Mosqueteiro_S");
@@ -21,9 +21,10 @@ public partial class Mosqueteiro : Peca
 
             if (spriteRect.HasPoint(localMouse))
             {
+                
                 if (!estaSelecionado && board.pecaSelecionada == null)
                 {
-                    // Seleciona e realça casas vizinhas
+                    // Primeiro clique: seleciona e realça
                     estaSelecionado = true;
                     board.RealcarCasasVizinhas(PosicaoLogica, true);
                     board.pecaSelecionada = this;
@@ -31,39 +32,14 @@ public partial class Mosqueteiro : Peca
                 }
                 else if (estaSelecionado)
                 {
-                    // Deseleciona se clicar novamente
+                    // Segundo clique: desmarca e remove realce
                     estaSelecionado = false;
-                    board.RealcarCasasVizinhas(PosicaoLogica, false);
                     board.pecaSelecionada = null;
+                    board.RealcarCasasVizinhas(PosicaoLogica, false);
                     GD.Print($"[DESELECIONADO] Mosqueteiro na posição {PosicaoLogica}");
                 }
+                ZIndex = estaSelecionado ? 2 : 1;
             }
-            else if (estaSelecionado)
-            {
-                // Clicou fora do sprite: tentar ação
-                Vector2 mouseNaBoard = GetGlobalMousePosition() - board.GlobalPosition;
-                Vector2I destino = board.PosicaoLocalParaLogica(mouseNaBoard);
-
-                if (board.PodeMoverOuAtacar(PosicaoLogica, destino))
-                {
-                    Vector2I origem = PosicaoLogica;
-
-                    board.MoverOuAtacar(origem, destino);
-
-                    PosicaoLogica = destino;
-                    AtualizarPosicaoVisual(board.cellWidth, board.cellHeight);
-
-                    estaSelecionado = false;
-                    board.pecaSelecionada = null;
-                    board.RealcarCasasVizinhas(origem, false);
-
-                    gameManager.PassarTurno();
-
-                    GD.Print($"[AÇÃO] Peça movida/atacada de {origem} para {destino}");
-                }
-            }
-
-            ZIndex = estaSelecionado ? 2 : 1;
         }
     }
 }

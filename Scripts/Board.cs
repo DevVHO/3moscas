@@ -55,14 +55,16 @@ public partial class Board : Node2D
                 target.AddChild(cellInstance);
                 grid[y, x] = cellInstance;
 
+
                 //utilização
                 char currentChar = boardMatrixChars[y, x];
                 Ocupacao ocupacao = CharParaOcupacao(currentChar);
                 estadoLogico[y, x] = ocupacao;
                 if (ocupacao == Ocupacao.Mosca)
                 {
-                    Peca Moscains = Mosca.Instantiate<Peca>();
+                    var Moscains = Mosca.Instantiate<Mosqueteiro>();
                     Moscains.PosicaoLogica = new Vector2I(x, y);
+                    Moscains.Dono = GameManager.QuemJoga.Mosqueteiro; // define dono
                     Moscains.AtualizarPosicaoVisual(cellWidth, cellHeight);
                     target.AddChild(Moscains);
                     pecasVisuais[y, x] = Moscains;
@@ -70,8 +72,9 @@ public partial class Board : Node2D
                 }
                 if (ocupacao == Ocupacao.Guarda)
                 {
-                    Peca Guardains = Guarda.Instantiate<Peca>();
+                    var Guardains = Guarda.Instantiate<Guarda>();
                     Guardains.PosicaoLogica = new Vector2I(x, y);
+                    Guardains.Dono = GameManager.QuemJoga.Guarda; // define dono
                     Guardains.AtualizarPosicaoVisual(cellWidth, cellHeight);
                     target.AddChild(Guardains);
                     pecasVisuais[y, x] = Guardains;
@@ -107,67 +110,6 @@ public partial class Board : Node2D
         Guarda
     }
     #endregion fimenumerados
-    public void MoverPeca(Vector2I origem, Vector2I destino, Ocupacao novaOcupacao)
-    {
-        var peca = pecasVisuais[origem.Y, origem.X];
-        pecasVisuais[origem.Y, origem.X] = null;
-        pecasVisuais[destino.Y, destino.X] = peca;
-
-        estadoLogico[origem.Y, origem.X] = Ocupacao.Vazio;
-        estadoLogico[destino.Y, destino.X] = novaOcupacao;
-    }
-    public void MoverOuAtacar(Vector2I origem, Vector2I destino)
-    {
-        Ocupacao origemOcupacao = estadoLogico[origem.Y, origem.X];
-        Ocupacao destinoOcupacao = estadoLogico[destino.Y, destino.X];
-
-        if (origemOcupacao == Ocupacao.Guarda)
-        {
-            // Movimento normal, destino deve estar vazio
-            MoverPeca(origem, destino, Ocupacao.Guarda);
-        }
-        else if (origemOcupacao == Ocupacao.Mosca && destinoOcupacao == Ocupacao.Guarda)
-        {
-            // Ataque do Mosqueteiro, remove Guarda e move Mosqueteiro
-            // Remove visual do Guarda
-            var pecaAtacada = pecasVisuais[destino.Y, destino.X];
-            if (pecaAtacada != null)
-                pecaAtacada.QueueFree();
-
-            // Atualiza arrays e estado lógico
-            pecasVisuais[destino.Y, destino.X] = pecasVisuais[origem.Y, origem.X];
-            pecasVisuais[origem.Y, origem.X] = null;
-
-            estadoLogico[destino.Y, destino.X] = Ocupacao.Mosca;
-            estadoLogico[origem.Y, origem.X] = Ocupacao.Vazio;
-        }
-    }
-    public bool EstaDentroDoTabuleiro(Vector2I pos)
-    {
-        return pos.X >= 0 && pos.X < columns && pos.Y >= 0 && pos.Y < rows;
-    }
-
-    public bool PodeMoverOuAtacar(Vector2I origem, Vector2I destino)
-    {
-        if (!EstaDentroDoTabuleiro(destino))
-            return false;
-
-        Ocupacao origemOcupacao = estadoLogico[origem.Y, origem.X];
-        Ocupacao destinoOcupacao = estadoLogico[destino.Y, destino.X];
-
-        if (origemOcupacao == Ocupacao.Guarda)
-        {
-            // Guarda só pode mover para casa vazia adjacente
-            return destinoOcupacao == Ocupacao.Vazio && EstaCelulaRealcada(destino);
-        }
-        else if (origemOcupacao == Ocupacao.Mosca)
-        {
-            // Mosqueteiro só pode atacar Guarda adjacente
-            return destinoOcupacao == Ocupacao.Guarda && EstaCelulaRealcada(destino);
-        }
-
-        return false;
-    }
 
     public void RealcarCasasVizinhas(Vector2I pos, bool ativar)
 
@@ -224,30 +166,8 @@ public partial class Board : Node2D
             }
         }
     }
-    public bool EstaCelulaRealcada(Vector2I pos)
-    {
-        if (!EstaDentroDoTabuleiro(pos))
-            return false;
 
-        var cell = grid[pos.Y, pos.X] as Cell;
-        if (cell != null)
-            return cell.EstaRealcada;
-
-        return false;
-    }
-    public Vector2I PosicaoLocalParaLogica(Vector2 posicaoLocal)
-    {
-        int x = (int)(posicaoLocal.X / cellWidth);
-        int y = (int)(posicaoLocal.Y / cellHeight);
-        return new Vector2I(x, y);
-    }
-    public Vector2I GetCelulaLogicaAPartirDoMouse(Vector2 globalMousePos)
-{
-    int col = (int)(globalMousePos.X / cellWidth);
-    int row = (int)(globalMousePos.Y / cellHeight);
-    return new Vector2I(col, row);
-}
-
+    
 
 
 }

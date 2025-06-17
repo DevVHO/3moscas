@@ -2,6 +2,7 @@ using Godot;
 
 public partial class Guarda : Peca
 {
+    private bool podeAtacar = false;
     public override void _Input(InputEvent @event)
     {
         if (gameManager.TurnoAtual != GameManager.QuemJoga.Guarda)
@@ -23,47 +24,21 @@ public partial class Guarda : Peca
             {
                 if (!estaSelecionado && board.pecaSelecionada == null)
                 {
-                    // Seleciona e realça casas vizinhas
                     estaSelecionado = true;
-                    board.RealcarCasasVizinhas(PosicaoLogica, true);
                     board.pecaSelecionada = this;
+                    board.RealcarCasasVizinhas(PosicaoLogica, true);
                     GD.Print($"[SELECIONADO] Guarda na posição {PosicaoLogica}");
                 }
                 else if (estaSelecionado)
                 {
-                    // Deseleciona se clicar novamente
                     estaSelecionado = false;
-                    board.RealcarCasasVizinhas(PosicaoLogica, false);
                     board.pecaSelecionada = null;
+                    board.RealcarCasasVizinhas(PosicaoLogica, false);
                     GD.Print($"[DESELECIONADO] Guarda na posição {PosicaoLogica}");
                 }
+
+                ZIndex = estaSelecionado ? 2 : 1;
             }
-            else if (estaSelecionado)
-            {
-                // Clicou fora do sprite: tentar ação
-                Vector2 mouseNaBoard = GetGlobalMousePosition() - board.GlobalPosition;
-                Vector2I destino = board.PosicaoLocalParaLogica(mouseNaBoard);
-
-                if (board.PodeMoverOuAtacar(PosicaoLogica, destino))
-                {
-                    Vector2I origem = PosicaoLogica;
-
-                    board.MoverOuAtacar(origem, destino);
-
-                    PosicaoLogica = destino;
-                    AtualizarPosicaoVisual(board.cellWidth, board.cellHeight);
-
-                    estaSelecionado = false;
-                    board.pecaSelecionada = null;
-                    board.RealcarCasasVizinhas(origem, false);
-
-                    gameManager.PassarTurno();
-
-                    GD.Print($"[AÇÃO] Guarda movido/atacado de {origem} para {destino}");
-                }
-            }
-
-            ZIndex = estaSelecionado ? 2 : 1;
         }
     }
 }
