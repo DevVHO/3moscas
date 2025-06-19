@@ -89,7 +89,7 @@ public partial class Board : Node2D
         { 'G', 'G', 'G', 'G', 'M' },
         { 'G', 'G', 'G', 'G', 'G' },
         { 'G', 'G', 'M', 'G', 'G' },
-        { 'G', 'G', 'V', 'G', 'G' },
+        { 'G', 'G', 'G', 'G', 'G' },
         { 'M', 'G', 'G', 'G', 'G' }
     };
 
@@ -134,7 +134,7 @@ public partial class Board : Node2D
                 var cell = grid[vizinho.Y, vizinho.X] as Cell;
                 if (cell != null)
                 {
-                    if (gameManager.TurnoAtual == GameManager.QuemJoga.Mosqueteiro)
+                    if (gameManager.TurnoAtual == GameManager.QuemJoga.Mosqueteiro)//Na vez do Mosqueteiro, ele vai procurar os guardas
                     {
                         // Mosqueteiro só pode atacar Guarda
                         if (peca is Guarda)
@@ -148,7 +148,7 @@ public partial class Board : Node2D
                             cell.EstaRealcada = false;
                         }
                     }
-                    else if (gameManager.TurnoAtual == GameManager.QuemJoga.Guarda)
+                    else if (gameManager.TurnoAtual == GameManager.QuemJoga.Guarda)//Na vez do Guarda ele vai procurar casas vazias
                     {
                         // Guarda só pode andar para casas vazias
                         if (estadoLogico[vizinho.Y, vizinho.X] == Ocupacao.Vazio)
@@ -166,6 +166,7 @@ public partial class Board : Node2D
             }
         }
     }
+    
 
     
 

@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://d238xcv4uoaj1" path="res://Scripts/Pecas/Peca.cs" id="2_epypp"]
 [ext_resource type="PackedScene" uid="uid://d2raeeiu2eckn" path="res://Prefabs/tile.tscn" id="2_kdubu"]
 [ext_resource type="PackedScene" uid="uid://b45nxnfw8ovj0" path="res://Prefabs/guarda.tscn" id="3_d21ai"]
-[ext_resource type="PackedScene" uid="uid://brfhbk162xyfg" path="res://Prefabs/Mosqueteiro.tscn" id="4_rj586"]
+[ext_resource type="PackedScene" uid="uid://durv66phnu8wk" path="res://Prefabs/Mosqueteiro.tscn" id="4_rj586"]
 
 [node name="Node2D" type="Node2D"]
 

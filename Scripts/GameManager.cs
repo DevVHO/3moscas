@@ -10,7 +10,7 @@ public partial class GameManager : Node2D
         Guarda
     }
 
-    public QuemJoga TurnoAtual { get; private set; } = QuemJoga.Guarda;
+    public QuemJoga TurnoAtual { get; private set; } = QuemJoga.Mosqueteiro;
 
     private Board board;
 

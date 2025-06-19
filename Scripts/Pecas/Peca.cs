@@ -18,14 +18,5 @@ public partial class Peca : Node2D
     {
         Position = new Vector2(PosicaoLogica.X * cellWidth, PosicaoLogica.Y * cellHeight);
     }
-    public bool PertenceAoTurno(GameManager.QuemJoga turnoAtual)
-    {
-        return Dono == turnoAtual;
-    }
-    public void MarcarSelecionado(bool selecionado)
-    {
-        // opcional: altere a cor ou escala para indicar que foi selecionado
-        Modulate = selecionado ? new Color(1, 1, 0.6f) : Colors.White;
-    }
 	
 }
